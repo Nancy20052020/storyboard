@@ -8,11 +8,13 @@ A full-window, private world of floating islands. No quests, scores, accounts, A
 - **Starlit Observatory** — one real sky and one writing system. The bundled catalog contains 5,044 measured Hipparcos/XHIP stars and all 88 constellation patterns. Search by proper name or Hipparcos number, click a star, write beside it, and connect two actual stars. A location/time panel changes the geometric sky reference; **Your sky now** returns to the current overhead sky. Default location is explicitly New Delhi until you choose another city or opt into location access. The selected location is stored on this device. There is no separate atlas/journal view or invented-star placement.
 - **Whisperwood** — draw directly into a full-screen forest clearing with a mouse, touch, or local camera-based hand tracking. Pinch thumb + index to draw; release to move. Colors, brush sizes, undo, clear, and saved sketches remain available.
 - **Moonwell** — writing and open water occupy separate layout regions. New lanterns travel toward the water. **Let it go** makes a saved lantern drift away before removing it; **Bring it back** recalls it during the departure. Reduced-motion users get a short, quieter transition. Collections page in groups of 24 on desktop or 12 on mobile, preserving access to all 100 supported thoughts without covering the composer.
-- **Everbloom** — a full-background conservatory with 24 planting locations, nine realistic flower species, musical notes, tempo/playback, and moonlight/first-light lighting. Earlier eight-patch gardens migrate automatically.
+- **Everbloom** — a full-background conservatory with free planting anywhere you click, nine realistic flower species, draggable positions, individual flower sizes, musical notes, tempo/playback, and moonlight/first-light lighting. Earlier eight- and twenty-four-patch gardens migrate automatically to foreground soil.
+- **Postscript** — a garden letter atelier with three papers and inks, draggable/resizable/rotatable pressed flowers, wax seals, ribbons, stamps, and moon charms. Fold letters into a personal postbox and reopen them. The ethereal photo booth offers Moon silver, Rose haze, and Aurora mist themes, local camera capture or photo selection, and one-to-three-photo strips attached to your letter. The postbox is private storage, not email delivery.
+- **Stillroom** — four illustrated café/library seats. Choose a spot to enter it, switch rain/sunlit/night atmosphere, add a study intention and desk notes, and light a candle timer with pause/resume/reset. The clock continues when you leave the island or browser tab and reconciles when you return. Background readers are illustrated company, not live users. Optional synthesized room sound is local.
 
 **Aster**, a small celestial dragon spirit, welcomes Nancy to each island. Drag Aster with a mouse or touch, or focus the companion and use arrow keys to move. Click to chat, say hello, or start an optional stroll. Home resets the focused companion’s position. Drag positions persist on this device, adapt to viewport changes, and stay clear of the header and bottom navigation. Welcome messages close as you begin interacting. The navigation is styled as an engraved portal rail with orbiting accents.
 
-All export, download, and import controls have been removed at the user's request. Content stays in browser storage.
+No export or download controls. The personal record shelf accepts up to twelve audio files (40 MB each), plays/pauses/seeks/loops with volume control, and continues between islands. Songs, letters, and photo strips stay in IndexedDB on this device; other island writing stays in localStorage. Only explicitly selected music/photos are imported. Clearing site data removes saved content. Private browsing or storage limits may prevent persistence. Media is never uploaded.
 
 ## The real sky
 
@@ -22,7 +24,7 @@ Earlier invented-star journal entries remain under **Your saved thoughts → Ear
 
 ## Visual direction
 
-The redesign uses spacious, scene-first navigation, interaction at the edges, layered atmosphere, and progressive reveal. Bruno Simon’s [public portfolio source](https://github.com/brunosimon/folio-2019), including its world/reveal/control structure, was reviewed as an interaction reference. Live access to bruno-simon.com, neal.fun, and littleworkshop.fr was blocked by the setup environment’s network policy; no live-site inspection is claimed. Botanical specimens and landscape artwork are bundled locally, with reduced-motion fallbacks for animation.
+The redesign uses spacious, scene-first navigation, interaction at the edges, layered atmosphere, and progressive reveal. Bruno Simon’s [public portfolio source](https://github.com/brunosimon/folio-2019), including its world/reveal/control structure, was reviewed as an interaction reference. Live access to bruno-simon.com, neal.fun, and littleworkshop.fr was blocked by the setup environment’s network policy; no live-site inspection is claimed. Gardenletters was requested as a reference, but gardenletters.com was blocked by the environment’s network policy, so no live inspection is claimed. The atelier and study rooms are original implementations. Botanical specimens and landscape artwork are bundled locally, with reduced-motion fallbacks for animation.
 
 ## Develop
 
@@ -60,7 +62,7 @@ npm run typecheck
 npm run test:e2e
 ```
 
-`npm test` checks astronomy reference values, catalog integrity, projection/precession/horizon geometry, and hand gesture recognition. Browser tests exercise real-star selection and writing, legacy thought attachment, current-sky settings, star connections, Nancy’s carousel, Aster’s dragging/welcomes, botanical garden persistence, lantern layout/release, and hand drawing/camera cleanup. The browser suite builds and starts a production server on port 3100. Desktop and phone workflows are included.
+`npm test` checks astronomy reference values, catalog integrity, projection/precession/horizon geometry, and hand gesture recognition. Browser tests exercise real-star selection and writing, legacy thought attachment, current-sky settings, star connections, Nancy’s carousel, Aster’s dragging/welcomes, free planting/resizing/dragging and migration, instrument/navigation separation, home copy layout, letter stationery/postbox persistence, local photo strips/camera cleanup, personal song playback/persistence, candle timer/seat/notes persistence, lantern layout/release, and hand drawing/camera cleanup. The browser suite builds and starts a production server on port 3100. Desktop and phone workflows are included.
 
 For the browser suite, first install Chromium with `npx playwright install chromium`, or point to an existing installation:
 

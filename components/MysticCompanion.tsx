@@ -8,6 +8,10 @@ const welcomes: Record<string, string> = {
   forest:
     "Welcome to Whisperwood. The clearing is yours, Nancy. Shall we turn a small gesture into a little magic?",
   lake: "Welcome to Moonwell, Nancy. Give a thought to the water. You don’t have to carry everything all the time.",
+  letters:
+    "Welcome to Postscript, Nancy. Shall we fold a little kindness into an envelope? Your words and keepsakes are safe here.",
+  study:
+    "Welcome to Stillroom. I’ve kept a quiet seat for you, Nancy. Light a candle, and begin with one small thing.",
   garden:
     "Welcome to Everbloom. Something lovely is waiting to grow, Nancy. Which flower feels like you today?",
 };

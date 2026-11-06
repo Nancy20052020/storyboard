@@ -140,20 +140,20 @@ test("botanical garden still plants, tunes, plays and restores without export co
   page,
 }) => {
   await page.goto("/#garden");
-  await page.getByRole("button", { name: /Plant flowers/ }).click();
+  await page.getByRole("button", { name: /Choose flowers/ }).click();
   await page
     .getByRole("button", { name: "Choose Stargazer lily", exact: true })
     .click();
   await page
-    .getByRole("button", { name: "Plant in patch 1", exact: true })
-    .click();
+    .locator(".free-flower-field")
+    .click({ position: { x: 700, y: 650 } });
   await page.getByRole("combobox", { name: "Bloom note" }).selectOption("5");
   await page
     .getByRole("textbox", { name: "Garden name" })
     .fill("My moonlit melody");
   await page.getByRole("slider", { name: "Melody tempo" }).fill("100");
   await page
-    .getByRole("button", { name: "Listen to your garden", exact: true })
+    .getByRole("button", { name: "Garden melody", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Mute ambient sound", exact: true }),
@@ -165,7 +165,7 @@ test("botanical garden still plants, tunes, plays and restores without export co
   );
   await expect(
     page.getByRole("button", {
-      name: "Bloom 1: starlily, note C↑",
+      name: "Stargazer lily planting 5, note C↑",
       exact: true,
     }),
   ).toBeVisible();

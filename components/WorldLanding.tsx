@@ -11,6 +11,8 @@ import {
   Leaf,
   Waves,
   Flower2,
+  Mail,
+  BookOpen,
 } from "lucide-react";
 import IslandArt, { type IslandKind } from "./IslandArt";
 const destinations = [
@@ -58,6 +60,28 @@ const destinations = [
     color: "#d0a9b9",
     icon: Flower2,
   },
+  {
+    id: "letters" as const,
+    name: "Postscript",
+    eyebrow: "For the words that linger",
+    verb: "Open the atelier",
+    description:
+      "Write a letter. Press a flower between its lines. Keep a little moment in an ethereal photo strip.",
+    note: "THE GARDEN LETTER ATELIER",
+    color: "#ccbda8",
+    icon: Mail,
+  },
+  {
+    id: "study" as const,
+    name: "Stillroom",
+    eyebrow: "A place for one small thing",
+    verb: "Find your quiet seat",
+    description:
+      "A window table, a library nook, a little candlelight. Settle in with your work and your own soundtrack.",
+    note: "THE QUIET CAFÉ & LIBRARY",
+    color: "#b8bca0",
+    icon: BookOpen,
+  },
 ];
 export default function WorldLanding({
   onTravel,
@@ -81,12 +105,15 @@ export default function WorldLanding({
       setDrifting(false);
       return;
     }
-    const timer = setInterval(() => setIndex((i) => (i + 1) % 4), 9000);
+    const timer = setInterval(
+      () => setIndex((i) => (i + 1) % destinations.length),
+      9000,
+    );
     return () => clearInterval(timer);
   }, [drifting]);
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
   function preview(i: number) {
-    setIndex((i + 4) % 4);
+    setIndex((i + destinations.length) % destinations.length);
     onChime();
   }
   return (
@@ -173,14 +200,22 @@ export default function WorldLanding({
           aria-label="Rotate to previous island"
           onClick={() => preview(index - 1)}
         >
-          <IslandArt kind={destinations[(index + 3) % 4].id} />
+          <IslandArt
+            kind={
+              destinations[
+                (index + destinations.length - 1) % destinations.length
+              ].id
+            }
+          />
         </button>
         <button
           className="carousel-neighbor next"
           aria-label="Rotate to next island"
           onClick={() => preview(index + 1)}
         >
-          <IslandArt kind={destinations[(index + 1) % 4].id} />
+          <IslandArt
+            kind={destinations[(index + 1) % destinations.length].id}
+          />
         </button>
         <span className="spotlight-halo" />
         <button
@@ -207,7 +242,7 @@ export default function WorldLanding({
           <IslandArt kind={destination.id} />
         </button>
         <span className="spotlight-coordinate">
-          {destination.note} <i /> {String(index + 1).padStart(2, "0")} / 04
+          {destination.note} <i /> {String(index + 1).padStart(2, "0")} / 06
         </span>
       </div>
       <div

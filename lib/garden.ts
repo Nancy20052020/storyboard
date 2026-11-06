@@ -73,8 +73,20 @@ export const flowers = [
   },
 ] as const;
 export type FlowerKind = (typeof flowers)[number]["id"];
-export type Bloom = { kind: FlowerKind; note: number };
-export type Garden = { name: string; blooms: (Bloom | null)[]; tempo: number };
+export type GardenPlant = {
+  id: string;
+  kind: FlowerKind;
+  note: number;
+  x: number;
+  y: number;
+  size: number;
+};
+export type Garden = {
+  version: 3;
+  name: string;
+  plants: GardenPlant[];
+  tempo: number;
+};
 export const notes = [
   { name: "C", frequency: 261.63 },
   { name: "D", frequency: 293.66 },
@@ -86,14 +98,45 @@ export const notes = [
   { name: "E↑", frequency: 659.25 },
 ];
 export function readGarden(value: unknown): Garden | null {
-  const g = value as Garden;
+  const g = value as Garden & {
+    blooms?: ({ kind: FlowerKind; note: number } | null)[];
+  };
   if (
     !g ||
     typeof g.name !== "string" ||
     g.name.length > 80 ||
     !Number.isFinite(g.tempo) ||
     g.tempo < 50 ||
-    g.tempo > 140 ||
+    g.tempo > 140
+  )
+    return null;
+  if (Array.isArray(g.plants)) {
+    if (
+      g.plants.length > 200 ||
+      !g.plants.every(
+        (p) =>
+          p &&
+          typeof p.id === "string" &&
+          flowers.some((f) => f.id === p.kind) &&
+          Number.isInteger(p.note) &&
+          p.note >= 0 &&
+          p.note < 8 &&
+          Number.isFinite(p.x) &&
+          p.x >= 2 &&
+          p.x <= 98 &&
+          Number.isFinite(p.y) &&
+          p.y >= 8 &&
+          p.y <= 94 &&
+          Number.isFinite(p.size) &&
+          p.size >= 0.4 &&
+          p.size <= 2.2,
+      ) ||
+      new Set(g.plants.map((p) => p.id)).size !== g.plants.length
+    )
+      return null;
+    return { version: 3, name: g.name, tempo: g.tempo, plants: g.plants };
+  }
+  if (
     !Array.isArray(g.blooms) ||
     ![8, 24].includes(g.blooms.length) ||
     !g.blooms.every(
@@ -108,28 +151,33 @@ export function readGarden(value: unknown): Garden | null {
   )
     return null;
   return {
-    ...g,
-    blooms: [...g.blooms, ...Array(24 - g.blooms.length).fill(null)],
+    version: 3,
+    name: g.name,
+    tempo: g.tempo,
+    plants: g.blooms.flatMap((b, i) =>
+      b
+        ? [
+            {
+              id: `earlier-${i}`,
+              kind: b.kind,
+              note: b.note,
+              x: 12 + (i % 6) * 15,
+              y: 72 + Math.floor(i / 6) * 5,
+              size: 0.8 + Math.floor(i / 6) * 0.06,
+            },
+          ]
+        : [],
+    ),
   };
 }
 export const initialGarden: Garden = {
+  version: 3,
   name: "The garden after dusk",
   tempo: 76,
-  blooms: Array.from(
-    { length: 24 },
-    (_, i) =>
-      (
-        ({
-          1: { kind: "lavender", note: 0 },
-          4: { kind: "foxglove", note: 2 },
-          6: { kind: "iris", note: 4 },
-          9: { kind: "rose", note: 5 },
-          12: { kind: "peony", note: 2 },
-          15: { kind: "moonbell", note: 0 },
-          17: { kind: "tulip", note: 7 },
-          20: { kind: "starlily", note: 4 },
-          22: { kind: "sunsprig", note: 5 },
-        }) as Record<number, Bloom>
-      )[i] || null,
-  ),
+  plants: [
+    { id: "rose-1", kind: "rose", note: 0, x: 19, y: 76, size: 0.9 },
+    { id: "lavender-1", kind: "lavender", note: 2, x: 31, y: 81, size: 0.8 },
+    { id: "peony-1", kind: "peony", note: 4, x: 63, y: 77, size: 0.9 },
+    { id: "iris-1", kind: "iris", note: 5, x: 78, y: 84, size: 0.85 },
+  ],
 };

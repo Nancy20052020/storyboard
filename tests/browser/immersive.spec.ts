@@ -91,18 +91,18 @@ test("older eight-patch gardens migrate and new botanical plantings persist", as
   ).toHaveValue("My old garden");
   await expect(
     page.getByRole("button", {
-      name: "Bloom 1: moonbell, note E",
+      name: "Bluebell planting 1, note E",
       exact: true,
     }),
   ).toBeVisible();
-  await page.getByRole("button", { name: /Plant flowers/ }).click();
+  await page.getByRole("button", { name: /Choose flowers/ }).click();
   await expect(page.locator(".seed-list button")).toHaveCount(9);
   await page.getByRole("button", { name: "Choose Peony", exact: true }).click();
   await page
-    .getByRole("button", { name: "Plant in patch 13", exact: true })
-    .click();
+    .locator(".free-flower-field")
+    .click({ position: { x: 700, y: 650 } });
   await expect(
-    page.getByRole("button", { name: "Bloom 13: peony, note A", exact: true }),
+    page.getByRole("button", { name: "Peony planting 2, note D", exact: true }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Close flower details", exact: true })
@@ -112,21 +112,21 @@ test("older eight-patch gardens migrate and new botanical plantings persist", as
       page.evaluate(
         () =>
           JSON.parse(localStorage.getItem("starwoven-everbloom-v1") || "{}")
-            .blooms?.length,
+            .plants?.length,
       ),
     )
-    .toBe(24);
+    .toBe(2);
   const json = await page.evaluate(() =>
     JSON.parse(localStorage.getItem("starwoven-everbloom-v1") || "{}"),
   );
-  expect(json.blooms[0]).toEqual({ kind: "moonbell", note: 2 });
-  expect(json.blooms[12]).toEqual({ kind: "peony", note: 4 });
+  expect(json.plants[0]).toMatchObject({ kind: "moonbell", note: 2, y: 72 });
+  expect(json.plants[1]).toMatchObject({ kind: "peony" });
   await page.reload();
   await expect(
     page.getByRole("textbox", { name: "Garden name", exact: true }),
   ).toHaveValue("My old garden");
   await expect(
-    page.getByRole("button", { name: "Bloom 13: peony, note A", exact: true }),
+    page.getByRole("button", { name: "Peony planting 2, note D", exact: true }),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
