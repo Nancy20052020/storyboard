@@ -9,6 +9,8 @@ import {
   Trash2,
   X,
   Wind,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 type Lantern = { id: string; text: string; x: number; y: number; date: string };
 const storageKey = "starwoven-moonwell-v1";
@@ -25,7 +27,9 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
     [selected, setSelected] = useState<Lantern | null>(null),
     [breathing, setBreathing] = useState(false),
     [second, setSecond] = useState(0),
-    [notice, setNotice] = useState("");
+    [notice, setNotice] = useState(""),
+    [page, setPage] = useState(0),
+    [pageSize, setPageSize] = useState(24);
   const input = useRef<HTMLTextAreaElement>(null),
     close = useRef<HTMLButtonElement>(null),
     origin = useRef<HTMLElement | null>(null);
@@ -109,6 +113,22 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
       origin.current?.focus();
     };
   }, [selected]);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 650px)");
+    const resize = () => {
+      setPageSize(media.matches ? 12 : 24);
+      setPage(0);
+    };
+    resize();
+    media.addEventListener("change", resize);
+    return () => media.removeEventListener("change", resize);
+  }, []);
+  const pages = Math.max(1, Math.ceil(lanterns.length / pageSize));
+  const currentPage = Math.min(page, pages - 1);
+  const visibleLanterns = lanterns.slice(
+    currentPage * pageSize,
+    (currentPage + 1) * pageSize,
+  );
   function release() {
     const value = text.trim();
     if (!value) return;
@@ -128,6 +148,7 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
         date: new Date().toISOString(),
       },
     ]);
+    setPage(Math.floor(lanterns.length / pageSize));
     setText("");
     onChime();
     setNotice("A thought set afloat. It will be here when you return.");
@@ -164,131 +185,156 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
         </h1>
         <p>Some things feel lighter when you give them to the water.</p>
       </div>
-      <div className="water-ripples" aria-hidden="true">
-        {Array.from({ length: 8 }, (_, i) => (
-          <i
-            key={i}
-            style={{
-              top: `${i * 8}%`,
-              width: `${80 + i * 40}px`,
-              animationDelay: `${i * 0.7}s`,
-            }}
-          />
-        ))}
-      </div>
-      {lanterns.map((l, i) => (
-        <button
-          key={l.id}
-          className="floating-lantern"
-          style={{
-            left: `${Math.max(28, l.x)}%`,
-            top: `${Math.min(54, Math.max(45, l.y))}%`,
-            animationDelay: `${(i % 5) * -1.3}s`,
-          }}
-          aria-label={`Read lantern: ${l.text.slice(0, 45)}`}
-          onClick={() => {
-            setSelected(l);
-            onChime();
-          }}
-        >
-          <span className="lantern-light" />
-          <span className="lantern-body">
-            <i />
-          </span>
-          <span className="lantern-reflection" />
-        </button>
-      ))}
-      {!lanterns.length && (
-        <div className="lake-empty">
-          <span>✧</span>
-          <p>The water is waiting for your first thought.</p>
+      <div className="moonwell-stage" aria-label="Open water and lanterns">
+        <div className="water-ripples" aria-hidden="true">
+          {Array.from({ length: 8 }, (_, i) => (
+            <i
+              key={i}
+              style={{
+                top: `${i * 12}%`,
+                width: `${120 + i * 70}px`,
+                animationDelay: `${i * 0.7}s`,
+              }}
+            />
+          ))}
         </div>
-      )}
-      <div
-        className={`breathing-stone ${breathing ? `breathing phase-${phase}` : ""}`}
-      >
-        <button
-          className="breathe-orb"
-          onClick={() => {
-            setBreathing((b) => !b);
-            if (!breathing) setSecond(0);
-          }}
-          aria-label={
-            breathing ? "Pause breathing exercise" : "Start breathing exercise"
-          }
+        <div className="lantern-field">
+          {visibleLanterns.map((l, i) => (
+            <button
+              key={l.id}
+              className="floating-lantern"
+              style={{
+                gridColumn: ((i * 5) % (pageSize === 12 ? 4 : 8)) + 1,
+                gridRow: Math.floor(i / (pageSize === 12 ? 4 : 8)) + 1,
+                animationDelay: `${(i % 5) * -1.3}s`,
+              }}
+              aria-label={`Read lantern: ${l.text.slice(0, 45)}`}
+              onClick={() => {
+                setSelected(l);
+                onChime();
+              }}
+            >
+              <span className="lantern-light" />
+              <span className="lantern-body">
+                <i />
+              </span>
+              <span className="lantern-reflection" />
+            </button>
+          ))}
+        </div>
+        {!lanterns.length && (
+          <div className="lake-empty">
+            <span>✧</span>
+            <p>The water is waiting for your first thought.</p>
+          </div>
+        )}
+        {lanterns.length > 0 && (
+          <div className="lantern-pages">
+            <span>
+              {currentPage * pageSize + 1}–
+              {Math.min((currentPage + 1) * pageSize, lanterns.length)} of{" "}
+              {lanterns.length} floating thoughts
+            </span>
+            {pages > 1 && (
+              <>
+                <button
+                  aria-label="Previous lanterns"
+                  disabled={currentPage === 0}
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                >
+                  <ChevronLeft size={13} />
+                </button>
+                <button
+                  aria-label="Next lanterns"
+                  disabled={currentPage === pages - 1}
+                  onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
+                >
+                  <ChevronRight size={13} />
+                </button>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+      <div className="moonwell-footer">
+        <div
+          className={`breathing-stone ${breathing ? `breathing phase-${phase}` : ""}`}
         >
-          <span className="orb-ring" />
-          <span className="orb-ring second" />
-          {breathing ? (
-            <>
-              <span className="breathe-number">{remaining}</span>
-              <Pause size={12} />
-            </>
-          ) : (
-            <Wind size={25} strokeWidth={1} />
-          )}
-        </button>
-        <div>
-          <span className="card-kicker">A MOMENT FOR YOU</span>
-          <p aria-live="polite">
-            {breathing ? phases[phase].label : "Stay for a breath."}
-          </p>
           <button
-            className="breathe-toggle"
+            className="breathe-orb"
             onClick={() => {
               setBreathing((b) => !b);
               if (!breathing) setSecond(0);
             }}
+            aria-label={
+              breathing
+                ? "Pause breathing exercise"
+                : "Start breathing exercise"
+            }
           >
-            {breathing ? <Pause size={10} /> : <Play size={10} />}{" "}
-            {breathing ? "Pause" : "Begin breathing"}
+            <span className="orb-ring" />
+            <span className="orb-ring second" />
+            {breathing ? (
+              <>
+                <span className="breathe-number">{remaining}</span>
+                <Pause size={12} />
+              </>
+            ) : (
+              <Wind size={25} strokeWidth={1} />
+            )}
           </button>
+          <div>
+            <span className="card-kicker">A MOMENT FOR YOU</span>
+            <p aria-live="polite">
+              {breathing ? phases[phase].label : "Stay for a breath."}
+            </p>
+            <button
+              className="breathe-toggle"
+              onClick={() => {
+                setBreathing((b) => !b);
+                if (!breathing) setSecond(0);
+              }}
+            >
+              {breathing ? <Pause size={10} /> : <Play size={10} />}{" "}
+              {breathing ? "Pause" : "Begin breathing"}
+            </button>
+          </div>
         </div>
-      </div>
-      <div className="lantern-compose">
-        <label htmlFor="lantern-thought">
-          <BookOpen size={14} /> A wish, a worry, or something worth
-          remembering.
-        </label>
-        <div className="lantern-input">
-          <textarea
-            ref={input}
-            id="lantern-thought"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            maxLength={1000}
-            placeholder="Dear universe…"
-            rows={2}
-          />
-          <button
-            aria-label="Set your thought afloat"
-            disabled={!text.trim()}
-            onClick={release}
-          >
-            <ArrowUp size={20} />
-          </button>
+        <div className="lantern-compose">
+          <label htmlFor="lantern-thought">
+            <BookOpen size={14} /> A wish, a worry, or something worth
+            remembering.
+          </label>
+          <div className="lantern-input">
+            <textarea
+              ref={input}
+              id="lantern-thought"
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={1000}
+              placeholder="Dear universe…"
+              rows={2}
+            />
+            <button
+              aria-label="Set your thought afloat"
+              disabled={!text.trim()}
+              onClick={release}
+            >
+              <ArrowUp size={20} />
+            </button>
+          </div>
+          <div className="lantern-compose-meta">
+            <span className={!saved ? "storage-warning" : ""}>
+              {saved
+                ? "Only you and the moon. Saved on this device."
+                : "Storage unavailable · export to keep your lanterns."}
+            </span>
+            <button onClick={download} disabled={!lanterns.length}>
+              <Download size={12} /> Export {lanterns.length}{" "}
+              {lanterns.length === 1 ? "lantern" : "lanterns"}
+            </button>
+          </div>
         </div>
-        <div className="lantern-compose-meta">
-          <span className={!saved ? "storage-warning" : ""}>
-            {saved
-              ? "Only you and the moon. Saved on this device."
-              : "Storage unavailable · export to keep your lanterns."}
-          </span>
-          <button onClick={download} disabled={!lanterns.length}>
-            <Download size={12} /> Export {lanterns.length}{" "}
-            {lanterns.length === 1 ? "lantern" : "lanterns"}
-          </button>
-        </div>
-      </div>
-      <div className="lake-companion" aria-hidden="true">
-        <span className="moon-jelly">
-          <i />
-          <i />
-          <i />
-        </span>
-        <p>
-          “There’s no hurry here.”<span>LUMI, THE MOONKEEPER</span>
-        </p>
       </div>
       {notice && (
         <div className="realm-toast" role="status">

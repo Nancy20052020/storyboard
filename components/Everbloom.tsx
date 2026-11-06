@@ -10,72 +10,20 @@ import {
   Check,
   Music2,
   Shuffle,
+  X,
+  Sun,
+  Moon,
+  Upload,
 } from "lucide-react";
-type Kind = "moonbell" | "starlily" | "sunsprig";
-type Bloom = { kind: Kind; note: number };
-type Garden = { name: string; blooms: (Bloom | null)[]; tempo: number };
+import {
+  flowers,
+  notes,
+  readGarden,
+  initialGarden,
+  type Garden,
+  type FlowerKind,
+} from "@/lib/garden";
 const key = "starwoven-everbloom-v1";
-const seeds: [Kind, string, string, string][] = [
-  ["moonbell", "Moonbell", "A little bell of blue", "#a8c9ef"],
-  ["starlily", "Star lily", "A soft, rose-colored song", "#eab0d8"],
-  ["sunsprig", "Sunsprig", "A warm drop of honey", "#e7c687"],
-];
-const notes = [
-  { name: "C", frequency: 261.63 },
-  { name: "D", frequency: 293.66 },
-  { name: "E", frequency: 329.63 },
-  { name: "G", frequency: 392 },
-  { name: "A", frequency: 440 },
-  { name: "C↑", frequency: 523.25 },
-  { name: "D↑", frequency: 587.33 },
-  { name: "E↑", frequency: 659.25 },
-];
-const positions = [
-  [16, 60],
-  [27, 39],
-  [40, 64],
-  [46, 28],
-  [58, 52],
-  [68, 30],
-  [77, 63],
-  [88, 41],
-];
-const initial: Garden = {
-  name: "A garden of little songs",
-  tempo: 88,
-  blooms: [
-    { kind: "moonbell", note: 0 },
-    null,
-    { kind: "starlily", note: 2 },
-    null,
-    { kind: "sunsprig", note: 4 },
-    null,
-    { kind: "moonbell", note: 5 },
-    null,
-  ],
-};
-function valid(value: unknown): value is Garden {
-  const g = value as Garden;
-  return (
-    !!g &&
-    typeof g.name === "string" &&
-    g.name.length <= 80 &&
-    Number.isFinite(g.tempo) &&
-    g.tempo >= 50 &&
-    g.tempo <= 140 &&
-    Array.isArray(g.blooms) &&
-    g.blooms.length === 8 &&
-    g.blooms.every(
-      (b) =>
-        b === null ||
-        (b &&
-          seeds.some((s) => s[0] === b.kind) &&
-          Number.isInteger(b.note) &&
-          b.note >= 0 &&
-          b.note < 8),
-    )
-  );
-}
 export default function Everbloom({
   sound,
   onEnableSound,
@@ -85,27 +33,30 @@ export default function Everbloom({
   onEnableSound: () => Promise<void>;
   onNote: (frequency: number, kind: string) => void;
 }) {
-  const [garden, setGarden] = useState<Garden>(initial),
+  const [garden, setGarden] = useState<Garden>(initialGarden),
     [ready, setReady] = useState(false),
-    [seed, setSeed] = useState<Kind>("moonbell"),
+    [seed, setSeed] = useState<FlowerKind>("rose"),
     [selected, setSelected] = useState<number | null>(null),
     [playing, setPlaying] = useState(false),
     [step, setStep] = useState(-1),
     [saved, setSaved] = useState(true),
-    [message, setMessage] = useState("");
+    [message, setMessage] = useState(""),
+    [palette, setPalette] = useState(false),
+    [dawn, setDawn] = useState(false);
   const current = useRef(garden),
-    note = useRef(onNote);
+    note = useRef(onNote),
+    file = useRef<HTMLInputElement>(null);
   current.current = garden;
   note.current = onNote;
   useEffect(() => {
     try {
       const raw = localStorage.getItem(key);
       if (raw) {
-        const parsed = JSON.parse(raw);
-        if (valid(parsed)) setGarden(parsed);
+        const parsed = readGarden(JSON.parse(raw));
+        if (parsed) setGarden(parsed);
         else
           setMessage(
-            "Your previous garden could not be read. A new little melody is waiting.",
+            "Your previous garden could not be read. A new planting is waiting.",
           );
       }
     } catch {
@@ -127,12 +78,12 @@ export default function Everbloom({
       setStep(-1);
       return;
     }
-    let index = 0;
+    let i = 0;
     const tick = () => {
-      setStep(index);
-      const b = current.current.blooms[index];
+      setStep(i);
+      const b = current.current.blooms[i];
       if (b) note.current(notes[b.note].frequency, b.kind);
-      index = (index + 1) % 8;
+      i = (i + 1) % current.current.blooms.length;
     };
     tick();
     const timer = setInterval(tick, 60000 / garden.tempo);
@@ -152,13 +103,13 @@ export default function Everbloom({
       setSelected(i);
       onNote(notes[b.note].frequency, b.kind);
     } else {
-      const bloom = { kind: seed, note: i };
+      const n = i % 8;
       setGarden((g) => ({
         ...g,
-        blooms: g.blooms.map((b, n) => (n === i ? bloom : b)),
+        blooms: g.blooms.map((b, j) => (j === i ? { kind: seed, note: n } : b)),
       }));
       setSelected(i);
-      onNote(notes[i].frequency, seed);
+      onNote(notes[n].frequency, seed);
     }
   }
   function exportGarden() {
@@ -172,72 +123,114 @@ export default function Everbloom({
     a.download = "my-everbloom-garden.json";
     a.click();
     URL.revokeObjectURL(url);
-    setMessage("Your melody is tucked safely into a file.");
+    setMessage("Your planting and its melody are saved in a file.");
   }
-  const bloom = selected !== null ? garden.blooms[selected] : null;
+  async function importGarden(f?: File) {
+    if (!f) return;
+    try {
+      if (f.size > 100000) throw Error();
+      const parsed = readGarden(JSON.parse(await f.text()));
+      if (!parsed) throw Error();
+      if (
+        !confirm(
+          "Replace this garden with the planting in this file? Export first to keep your current garden.",
+        )
+      )
+        return;
+      setPlaying(false);
+      setGarden(parsed);
+      setSelected(null);
+      setMessage("Your garden has found its way back.");
+    } catch {
+      setMessage("That file could not be read as an Everbloom garden.");
+    } finally {
+      if (file.current) file.current.value = "";
+    }
+  }
+  const chosen = flowers.find((f) => f.id === seed)!,
+    bloom = selected !== null ? garden.blooms[selected] : null,
+    selectedFlower = flowers.find((f) => f.id === bloom?.kind);
   return (
     <section
-      className="everbloom-scene scene-enter"
+      className={`everbloom-scene botanical-garden ${dawn ? "garden-at-dawn" : ""}`}
       aria-label="Everbloom musical garden"
     >
-      <div className="garden-aurora" />
+      <div className="botanical-backdrop" />
+      <div className="garden-weather" aria-hidden="true">
+        {Array.from({ length: 28 }, (_, i) => (
+          <i
+            key={i}
+            style={{
+              left: `${(i * 37.3 + 7) % 100}%`,
+              top: `${(i * 23.7 + 9) % 90}%`,
+              animationDelay: `${i % 7}s`,
+            }}
+          />
+        ))}
+      </div>
       <div className="place-heading">
         <div className="realm-eyebrow">
-          <span /> ISLAND 04 · THE CONSERVATORY OF SMALL JOYS
+          <span /> THE BOTANICAL CONSERVATORY
         </div>
         <h1>
-          Grow a little <em>harmony.</em>
+          Let something
+          <br />
+          <em>beautiful take root.</em>
         </h1>
-        <p>Every flower has a song. What will your garden sound like?</p>
+        <p>A living garden. A composition only you could grow.</p>
       </div>
+      <button
+        className="garden-light-switch"
+        onClick={() => setDawn((v) => !v)}
+        aria-pressed={dawn}
+      >
+        {dawn ? <Sun size={14} /> : <Moon size={14} />}{" "}
+        {dawn ? "First light" : "Moonlight"}
+      </button>
       <div className="everbloom-layout">
-        <aside className="seed-cabinet">
-          <span className="card-kicker">
-            <Flower2 size={13} /> PICK A LITTLE POSSIBILITY
-          </span>
-          <h2>Plant a sound.</h2>
+        <aside
+          className={`seed-cabinet ${palette ? "is-open" : ""}`}
+          aria-label="Flower collection"
+        >
+          <div className="seed-cabinet-heading">
+            <div>
+              <span className="card-kicker">THE BOTANICAL LIBRARY</span>
+              <h2>Choose what grows.</h2>
+            </div>
+            <button
+              aria-label="Close flower collection"
+              onClick={() => setPalette(false)}
+            >
+              <X size={16} />
+            </button>
+          </div>
           <p>
-            Choose a seed, then tap an empty patch. Tap a bloom to hear its note
-            or change its song.
+            Choose a flower, then an open patch in the garden. Each species
+            carries its own quiet note.
           </p>
           <div className="seed-list">
-            {seeds.map(([kind, name, description, color]) => (
+            {flowers.map((f) => (
               <button
-                key={kind}
-                className={seed === kind ? "chosen" : ""}
-                aria-pressed={seed === kind}
-                onClick={() => setSeed(kind)}
+                key={f.id}
+                className={seed === f.id ? "chosen" : ""}
+                aria-pressed={seed === f.id}
+                aria-label={`Choose ${f.name}`}
+                onClick={() => {
+                  setSeed(f.id);
+                  setPalette(false);
+                }}
               >
-                <span className={`seed-icon flower-${kind}`} style={{ color }}>
-                  <Flower2 size={24} strokeWidth={1} />
-                </span>
+                <span
+                  className={`botanical-specimen specimen-${f.tile}`}
+                  aria-hidden="true"
+                />
                 <span>
-                  <b>{name}</b>
-                  <small>{description}</small>
+                  <b>{f.name}</b>
+                  <i>{f.latin}</i>
                 </span>
-                {seed === kind && <Check size={13} />}
+                {seed === f.id && <Check size={13} />}
               </button>
             ))}
-          </div>
-          <div className="garden-tuning">
-            <label htmlFor="garden-tempo">
-              THE PACE OF YOUR GARDEN <span>{garden.tempo} BPM</span>
-            </label>
-            <input
-              id="garden-tempo"
-              aria-label="Melody tempo"
-              type="range"
-              min={50}
-              max={140}
-              value={garden.tempo}
-              onChange={(e) =>
-                setGarden((g) => ({ ...g, tempo: Number(e.target.value) }))
-              }
-            />
-            <div>
-              <span>Dreamy</span>
-              <span>A little dance</span>
-            </div>
           </div>
           <button
             className="garden-shuffle"
@@ -251,13 +244,8 @@ export default function Everbloom({
             }
           >
             <Shuffle size={12} />
-            Let the garden surprise me
+            Reimagine the melody
           </button>
-          <p className="garden-quiet-note">
-            {sound
-              ? "Sound is on. Touch a bloom and listen."
-              : "Play your garden to turn sound on."}
-          </p>
         </aside>
         <div className="garden-instrument">
           <div className="garden-namebar">
@@ -275,100 +263,85 @@ export default function Everbloom({
                 : "Storage unavailable · export to keep"}
             </span>
           </div>
-          <div className="enchanted-flowerbed">
-            <div className="greenhouse-arch" />
-            <div className="flowerbed-soil" />
-            <div className="garden-particles" aria-hidden="true">
-              {Array.from({ length: 30 }, (_, i) => (
-                <i
+          <div className="enchanted-flowerbed" aria-label="Your planting beds">
+            {garden.blooms.map((b, i) => {
+              const f = flowers.find((f) => f.id === b?.kind),
+                row = Math.floor(i / 8);
+              return (
+                <button
                   key={i}
-                  style={{
-                    left: `${(i * 37.3 + 7) % 100}%`,
-                    top: `${(i * 23.7 + 9) % 90}%`,
-                    animationDelay: `${i % 5}s`,
-                  }}
-                />
-              ))}
-            </div>
-            <div className="flowerbed-path" />
-            {garden.blooms.map((b, i) => (
-              <button
-                key={i}
-                className={`garden-patch ${b ? "planted" : "empty"} ${selected === i ? "picked" : ""} ${step === i ? "sounding" : ""}`}
-                aria-label={
-                  b
-                    ? `Bloom ${i + 1}: ${b.kind}, note ${notes[b.note].name}`
-                    : `Plant in patch ${i + 1}`
-                }
-                style={
-                  {
-                    left: `${positions[i][0]}%`,
-                    top: `${positions[i][1]}%`,
-                    "--bloom-color":
-                      seeds.find((s) => s[0] === b?.kind)?.[3] || "#c0a8cf",
-                  } as React.CSSProperties
-                }
-                onClick={() => plant(i)}
-              >
-                {b ? (
-                  <>
-                    <span className="bloom-aura" />
-                    <span className={`enchanted-flower flower-${b.kind}`}>
-                      <span className="flower-stem" />
-                      <span className="flower-leaf" />
-                      <span className="flower-petals">
-                        {Array.from(
-                          { length: b.kind === "starlily" ? 5 : 6 },
-                          (_, j) => (
-                            <i
-                              key={j}
-                              style={{
-                                rotate: `${j * (b.kind === "starlily" ? 72 : 60)}deg`,
-                              }}
-                            />
-                          ),
-                        )}
-                        <b />
+                  className={`garden-patch ${b ? "planted" : "empty"} ${selected === i ? "picked" : ""} ${step === i ? "sounding" : ""}`}
+                  aria-label={
+                    b
+                      ? `Bloom ${i + 1}: ${b.kind}, note ${notes[b.note].name}`
+                      : `Plant in patch ${i + 1}`
+                  }
+                  style={
+                    {
+                      left: `${9 + (i % 8) * 11.6 + (row % 2 ? 2 : 0)}%`,
+                      top: `${48 + row * 16 + (i % 2) * 3}%`,
+                      "--row": row,
+                      "--bloom-color": f?.color || "#a7b9a0",
+                    } as React.CSSProperties
+                  }
+                  onClick={() => plant(i)}
+                >
+                  {b && f ? (
+                    <>
+                      <span className="plant-ground-shadow" />
+                      <span
+                        className={`botanical-specimen specimen-${f.tile}`}
+                        aria-hidden="true"
+                      />
+                      <span className="plant-note-label">
+                        {f.name}
+                        <small>{notes[b.note].name}</small>
                       </span>
-                    </span>
-                    <span className="bloom-note">{notes[b.note].name}</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="empty-patch-ring">+</span>
-                    <span className="empty-patch-label">
-                      a little possibility
-                    </span>
-                  </>
-                )}
-              </button>
-            ))}
-            <div className="garden-bed-caption">
-              <span>✧</span> A melody made of living things.
-            </div>
+                    </>
+                  ) : (
+                    <>
+                      <span className="planting-mark" />
+                      <span className="empty-patch-label">
+                        Plant {chosen.name.toLowerCase()}
+                      </span>
+                    </>
+                  )}
+                </button>
+              );
+            })}
           </div>
           <div className="garden-player">
+            <button
+              className="open-flower-collection"
+              aria-expanded={palette}
+              onClick={() => setPalette((v) => !v)}
+            >
+              <Flower2 size={16} />
+              <span>Plant flowers</span>
+              <small>{chosen.name}</small>
+            </button>
+            <i className="instrument-separator" />
             <button
               className={`garden-play ${playing ? "is-playing" : ""}`}
               onClick={() => void toggle()}
               disabled={!garden.blooms.some(Boolean)}
             >
-              {playing ? <Pause size={15} /> : <Play size={15} />}{" "}
-              {playing ? "Pause your garden" : "Play your garden"}
+              {playing ? <Pause size={15} /> : <Play size={15} />}
+              <span>{playing ? "Pause melody" : "Listen to your garden"}</span>
             </button>
-            <div className="garden-sequencer" aria-label="Melody steps">
-              {garden.blooms.map((b, i) => (
-                <i
-                  key={i}
-                  className={`${step === i ? "now" : ""} ${b ? "has-note" : ""}`}
-                  style={
-                    {
-                      "--bloom-color": seeds.find((s) => s[0] === b?.kind)?.[3],
-                    } as React.CSSProperties
-                  }
-                />
-              ))}
-            </div>
+            <label className="tempo-inline">
+              <span>{garden.tempo} BPM</span>
+              <input
+                aria-label="Melody tempo"
+                type="range"
+                min={50}
+                max={140}
+                value={garden.tempo}
+                onChange={(e) =>
+                  setGarden((g) => ({ ...g, tempo: Number(e.target.value) }))
+                }
+              />
+            </label>
             <button
               className="garden-export"
               onClick={exportGarden}
@@ -376,16 +349,35 @@ export default function Everbloom({
             >
               <Download size={15} />
             </button>
+            <button
+              className="garden-export"
+              onClick={() => file.current?.click()}
+              aria-label="Import musical garden"
+            >
+              <Upload size={15} />
+            </button>
+            <input
+              hidden
+              type="file"
+              ref={file}
+              accept="application/json,.json"
+              onChange={(e) => void importGarden(e.target.files?.[0])}
+            />
           </div>
           {bloom && selected !== null ? (
             <div className="bloom-editor">
-              <span>
-                <Music2 size={13} />
-                {seeds.find((s) => s[0] === bloom.kind)?.[1]} · patch{" "}
-                {selected + 1}
-              </span>
+              <span className="card-kicker">A NOTE IN YOUR GARDEN</span>
+              <button
+                className="bloom-editor-close"
+                aria-label="Close flower details"
+                onClick={() => setSelected(null)}
+              >
+                <X size={14} />
+              </button>
+              <h3>{selectedFlower?.name}</h3>
+              <p>{selectedFlower?.description}</p>
               <label>
-                Its little note
+                Its note
                 <select
                   aria-label="Bloom note"
                   value={bloom.note}
@@ -417,14 +409,18 @@ export default function Everbloom({
                   setSelected(null);
                 }}
               >
-                <Trash2 size={13} />
+                <Trash2 size={12} />
+                Remove planting
               </button>
             </div>
           ) : (
-            <p className="garden-under-note">
+            <div className="garden-under-note">
               <Volume2 size={11} />
-              No perfect notes required. These flowers all get along.
-            </p>
+              {sound
+                ? "Touch a flower to hear it."
+                : "Listen to your garden to enable sound."}
+              <span>{garden.blooms.filter(Boolean).length} / 24 planted</span>
+            </div>
           )}
         </div>
       </div>

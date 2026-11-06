@@ -4,4 +4,4 @@ Starwoven uses Google's MediaPipe Hands (`@mediapipe/hands`), distributed under 
 
 Source: https://github.com/google-ai-edge/mediapipe
 
-Other dependencies retain their license files in their respective packages. Floating island artwork is bundled locally as a WebP atlas. The companion and interface artwork use SVG/CSS included in this repository.
+Other dependencies retain their license files in their respective packages. Floating island and botanical artwork and the immersive landscape backgrounds are bundled locally as WebP assets. The interface uses SVG/CSS included in this repository.

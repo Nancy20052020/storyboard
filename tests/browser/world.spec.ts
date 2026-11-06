@@ -26,9 +26,12 @@ test("islands are keyboard accessible and the original sky survives navigation",
   );
   await page.goto("/");
   await page
-    .getByRole("button", { name: "Visit Starlit Observatory", exact: true })
+    .getByRole("button", { name: "Preview Starlit Observatory", exact: true })
     .focus();
   await page.keyboard.press("Enter");
+  await page
+    .getByRole("button", { name: "Visit Starlit Observatory", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "My stars & writing", exact: true })
     .click();
@@ -165,7 +168,7 @@ test("camera denial gives a useful fallback without breaking drawing", async ({
   ).toBeEnabled();
   const board = page.locator(".drawing-board");
   const box = (await board.boundingBox())!;
-  await page.mouse.click(box.x + 100, box.y + 100);
+  await page.mouse.click(box.x + box.width * 0.6, box.y + box.height * 0.6);
   await expect(board.locator("circle[filter]")).toHaveCount(1);
 });
 

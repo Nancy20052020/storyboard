@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
-  ArrowUpRight,
   ArrowLeft,
   Volume2,
   VolumeX,
@@ -17,11 +16,12 @@ import {
   X,
   Flower2,
 } from "lucide-react";
-import IslandArt, { type IslandKind } from "@/components/IslandArt";
-import PipCompanion from "@/components/PipCompanion";
+import { type IslandKind } from "@/components/IslandArt";
+import WorldLanding from "@/components/WorldLanding";
 import useRealmAudio from "@/components/useRealmAudio";
 import "./realm.css";
 import "./enchanted.css";
+import "./immersive.css";
 const Observatory = dynamic(() => import("@/components/Observatory"), {
   loading: () => <div className="realm-loading">Gathering your stars…</div>,
 });
@@ -73,18 +73,9 @@ const islands = [
     icon: Flower2,
   },
 ];
-const messages = [
-  "No quests. No finish line. Just a little room to be.",
-  "I saved you a place among the stars.",
-  "A wobbly line is still a little bit of magic.",
-  "Your old stars are waiting in the Observatory.",
-  "You don’t have to make anything beautiful. You can just stay.",
-];
 export default function Home() {
   const [place, setPlace] = useState<Place>("world"),
     [full, setFull] = useState(false),
-    [mote, setMote] = useState(0),
-    [showMote, setShowMote] = useState(true),
     [showWelcome, setShowWelcome] = useState(false),
     [toast, setToast] = useState("");
   const { sound, toggle, chime, playNote, error } = useRealmAudio(place);
@@ -222,121 +213,7 @@ export default function Home() {
         }
       >
         {place === "world" ? (
-          <section
-            className="world-map scene-enter"
-            aria-label="Explore your floating islands"
-          >
-            <div className="map-intro">
-              <div className="realm-eyebrow">
-                <span /> SOMEWHERE SOFT TO LAND
-              </div>
-              <h1>
-                A world between
-                <br />a thought <em>& a dream.</em>
-              </h1>
-              <p>
-                Little islands. Endless possibilities.
-                <br />
-                Follow your curiosity. There’s no wrong way to wander.
-              </p>
-              <div className="map-invitation">
-                <span>✧</span> CHOOSE AN ISLAND TO BEGIN{" "}
-                <span className="invitation-line" />
-              </div>
-            </div>
-            <div className="islands-scene">
-              <div className="orbit orbit-one" />
-              <div className="orbit orbit-two" />
-              <svg
-                className="island-paths"
-                viewBox="0 0 1000 650"
-                preserveAspectRatio="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M360 190Q540 100 730 280T370 500"
-                  stroke="#b2a8cb"
-                  strokeOpacity=".17"
-                  strokeWidth="1"
-                  strokeDasharray="2 9"
-                  fill="none"
-                />
-                <circle cx="560" cy="183" r="3" fill="#d6c4a5" opacity=".5" />
-                <path
-                  d="m630 424 4 10 10 4-10 4-4 10-4-10-10-4 10-4Z"
-                  fill="#d6c4a5"
-                  opacity=".55"
-                />
-              </svg>
-              {islands.map((island) => (
-                <button
-                  key={island.id}
-                  className={`island island-${island.id}`}
-                  onClick={() => travel(island.id)}
-                  aria-label={`Visit ${island.name}`}
-                >
-                  <span className="island-aura" />
-                  <IslandArt kind={island.id} />
-                  <span className="island-label">
-                    <span className="island-index">
-                      {island.index} <i />
-                    </span>
-                    <span className="island-tag">{island.tag}</span>
-                    <strong>
-                      {island.name}
-                      <ArrowUpRight size={17} />
-                    </strong>
-                    <span className="island-description">
-                      {island.description}
-                    </span>
-                  </span>
-                </button>
-              ))}
-              <span className="map-coordinate coord-one">
-                ∞° N · YOUR OWN PACE
-              </span>
-              <span className="map-coordinate coord-two">
-                YOU ARE ALLOWED TO JUST BE HERE
-              </span>
-              <div className="map-moon" aria-hidden="true" />
-            </div>
-            <div className="world-bottom">
-              <div className="companion-wrap">
-                <button
-                  className="mote-character"
-                  onClick={() => {
-                    setShowMote(true);
-                    setMote((m) => (m + 1) % messages.length);
-                    chime();
-                  }}
-                  aria-label="Talk to Mote, your little star companion"
-                >
-                  <span className="mote-wings" />
-                  <span className="mote-body">
-                    <i />
-                    <i />
-                  </span>
-                  <span className="mote-spark">✦</span>
-                </button>
-                {showMote && (
-                  <div className="companion-message">
-                    <span>MOTE, YOUR LITTLE COMPANION</span>
-                    <p>{messages[mote]}</p>
-                    <button
-                      aria-label="Hide Mote’s message"
-                      onClick={() => setShowMote(false)}
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                )}
-              </div>
-              <div className="world-footnote">
-                <span className="live-dot" /> A PRIVATE LITTLE WORLD{" "}
-                <p>No accounts. No noise. Just you.</p>
-              </div>
-            </div>
-          </section>
+          <WorldLanding onTravel={travel} onChime={chime} />
         ) : place === "sky" ? (
           <section className="observatory-scene scene-enter">
             <Observatory onChime={chime} />
@@ -349,7 +226,6 @@ export default function Home() {
           <Everbloom sound={sound} onEnableSound={toggle} onNote={playNote} />
         )}
       </div>
-      <PipCompanion place={place} onChime={chime} />
       <nav className="island-dock" aria-label="Island navigation">
         <button
           className={place === "world" ? "selected" : ""}
@@ -376,7 +252,7 @@ export default function Home() {
         ))}
       </nav>
       <span className="realm-edition">
-        ENCHANTED EDITION · FOUR ISLANDS <Heart size={9} />
+        THE IMMERSIVE EDITION <Heart size={9} />
       </span>
       {(toast || error) && (
         <div className="realm-toast" role="status">

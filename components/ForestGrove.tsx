@@ -326,6 +326,20 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
       const clone = board.current.cloneNode(true) as SVGSVGElement;
       clone.querySelector(".hand-cursor")?.remove();
       clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+      const backdrop = clone.querySelector("image");
+      if (backdrop) {
+        const response = await fetch("/art/whisperwood-clearing.webp");
+        if (!response.ok) throw new Error("Drawing background unavailable");
+        const blob = await response.blob();
+        const source = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        backdrop.setAttribute("href", source);
+      }
+
       const imageHeight = Math.round(
         (1600 * board.current.getBoundingClientRect().height) /
           board.current.getBoundingClientRect().width,
@@ -536,6 +550,15 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
                 </filter>
               </defs>
               <rect width="1000" height="650" fill="url(#forest-paper)" />
+              <image
+                href="/art/whisperwood-clearing.webp"
+                x="0"
+                y="0"
+                width="1000"
+                height="650"
+                preserveAspectRatio="xMidYMid slice"
+                opacity=".87"
+              />
               {Array.from({ length: 45 }, (_, i) => (
                 <circle
                   key={i}
