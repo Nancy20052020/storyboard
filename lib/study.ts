@@ -6,6 +6,8 @@ export const studySpots = [
     description: "A little table, a warm cup, and the world beyond the glass.",
     tile: 0,
     icon: "window",
+    x: 18,
+    y: 57,
   },
   {
     id: "cafe-table",
@@ -15,6 +17,8 @@ export const studySpots = [
       "Quiet company at the far end. Plenty of room for your thoughts.",
     tile: 1,
     icon: "table",
+    x: 44,
+    y: 72,
   },
   {
     id: "library-window",
@@ -23,6 +27,8 @@ export const studySpots = [
     description: "Tall shelves, a brass lamp, and a window full of soft light.",
     tile: 2,
     icon: "books",
+    x: 73,
+    y: 43,
   },
   {
     id: "library-hearth",
@@ -31,6 +37,8 @@ export const studySpots = [
     description: "A sheltered corner where the room feels like an exhale.",
     tile: 3,
     icon: "fire",
+    x: 82,
+    y: 72,
   },
 ] as const;
 export type StudySpot = (typeof studySpots)[number]["id"];
@@ -42,6 +50,7 @@ export type StudyState = {
   paused: number | null;
   intention: string;
   notes: string;
+  ritual: "beeswax" | "rose" | "moon" | "ice";
 };
 export const initialStudy: StudyState = {
   spot: null,
@@ -51,6 +60,7 @@ export const initialStudy: StudyState = {
   paused: null,
   intention: "",
   notes: "",
+  ritual: "beeswax",
 };
 export function readStudy(value: unknown): StudyState | null {
   const s = value as StudyState;
@@ -66,7 +76,9 @@ export function readStudy(value: unknown): StudyState | null {
     typeof s.intention === "string" &&
     s.intention.length <= 160 &&
     typeof s.notes === "string" &&
-    s.notes.length <= 20000
-    ? s
+    s.notes.length <= 20000 &&
+    (s.ritual === undefined ||
+      ["beeswax", "rose", "moon", "ice"].includes(s.ritual))
+    ? { ...s, ritual: s.ritual || "beeswax" }
     : null;
 }

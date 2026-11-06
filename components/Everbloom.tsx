@@ -26,12 +26,10 @@ import {
 const key = "starwoven-everbloom-v1";
 export default function Everbloom({
   onStartMelody,
-  onStopMelody,
   onNote,
   onOpenMusic,
 }: {
   onStartMelody: () => Promise<void>;
-  onStopMelody: () => void;
   onNote: (frequency: number, kind: string) => void;
   onOpenMusic: () => void;
 }) {
@@ -105,11 +103,9 @@ export default function Everbloom({
     const timer = setInterval(tick, 60000 / garden.tempo);
     return () => clearInterval(timer);
   }, [playing, garden.tempo]);
-  useEffect(() => () => onStopMelody(), [onStopMelody]);
   async function toggle() {
     if (playing) {
       setPlaying(false);
-      onStopMelody();
       return;
     }
     try {

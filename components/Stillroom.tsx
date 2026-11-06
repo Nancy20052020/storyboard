@@ -17,6 +17,8 @@ import {
   X,
   PenLine,
   Check,
+  Snowflake,
+  MapPin,
 } from "lucide-react";
 import {
   studySpots,
@@ -31,9 +33,11 @@ function clockLabel(seconds: number) {
 export default function Stillroom({
   onChime,
   onOpenMusic,
+  onStartSound,
 }: {
   onChime: () => void;
   onOpenMusic: () => void;
+  onStartSound: () => void;
 }) {
   const [state, setState] = useState<StudyState>(initialStudy),
     [ready, setReady] = useState(false),
@@ -42,7 +46,14 @@ export default function Stillroom({
     [saved, setSaved] = useState(true),
     [roomSound, setRoomSound] = useState(false),
     [message, setMessage] = useState("");
-  const audio = useRef<AudioContext | null>(null),
+  const mapView = useRef<HTMLDivElement>(null),
+    mapDrag = useRef<{
+      x: number;
+      y: number;
+      left: number;
+      top: number;
+    } | null>(null),
+    audio = useRef<AudioContext | null>(null),
     noise = useRef<AudioBufferSourceNode | null>(null),
     gain = useRef<GainNode | null>(null),
     filter = useRef<BiquadFilterNode | null>(null),
@@ -133,6 +144,7 @@ export default function Stillroom({
         gain.current = g;
       }
       await audio.current.resume();
+      if (!roomSound) onStartSound();
       setRoomSound((v) => !v);
     } catch {
       setMessage(
@@ -146,7 +158,8 @@ export default function Stillroom({
       : (state.paused ?? state.duration * 60),
     burning = !!state.endsAt,
     finished = state.paused === 0 && !state.endsAt,
-    progress = Math.max(0.14, seconds / (state.duration * 60));
+    progress = Math.max(0, Math.min(1, seconds / (state.duration * 60))),
+    icy = state.ritual === "ice";
   function light() {
     const remaining =
       state.paused && state.paused > 0 ? state.paused : state.duration * 60;
@@ -168,7 +181,9 @@ export default function Stillroom({
       className={`stillroom-scene weather-${state.weather} ${spot ? `seated seat-${spot.id}` : "choosing-seat"}`}
       aria-label="Stillroom study island"
     >
-      <div className={`study-room-backdrop study-tile-${spot?.tile ?? 1}`} />
+      {spot && (
+        <div className={`study-room-backdrop study-tile-${spot.tile}`} />
+      )}
       <div className="study-room-shade" />
       {state.weather === "rain" && (
         <div className="study-rain" aria-hidden="true">
@@ -187,6 +202,65 @@ export default function Stillroom({
       {state.weather === "sun" && <div className="study-sunrays" />}
       {!spot ? (
         <>
+          <div
+            ref={mapView}
+            className="study-room-map"
+            aria-label="Explore the Stillroom café and library"
+            onPointerDown={(e) => {
+              if ((e.target as HTMLElement).closest("button")) return;
+              const el = e.currentTarget;
+              mapDrag.current = {
+                x: e.clientX,
+                y: e.clientY,
+                left: el.scrollLeft,
+                top: el.scrollTop,
+              };
+              el.setPointerCapture(e.pointerId);
+            }}
+            onPointerMove={(e) => {
+              const d = mapDrag.current;
+              if (!d) return;
+              e.currentTarget.scrollLeft = d.left - (e.clientX - d.x);
+              e.currentTarget.scrollTop = d.top - (e.clientY - d.y);
+            }}
+            onPointerUp={() => {
+              mapDrag.current = null;
+            }}
+            onPointerCancel={() => {
+              mapDrag.current = null;
+            }}
+          >
+            <div className="study-map-canvas">
+              <img
+                src="/art/stillroom-map.webp"
+                alt="A rain-window café connected to a library, with a shared oak table, east window alcove and hearth nook"
+                draggable={false}
+              />
+              {studySpots.map((s) => (
+                <button
+                  key={s.id}
+                  className={`study-map-spot map-${s.id}`}
+                  style={{ left: `${s.x}%`, top: `${s.y}%` }}
+                  aria-label={`Choose ${s.name}`}
+                  onClick={() => {
+                    setState((v) => ({ ...v, spot: s.id }));
+                    onChime();
+                  }}
+                >
+                  <span className="map-spot-glow">
+                    <MapPin size={17} />
+                  </span>
+                  <span className="map-spot-label">
+                    <small>{s.venue}</small>
+                    {s.name}
+                    <i>
+                      Settle here <ArrowUpRight size={10} />
+                    </i>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="study-welcome">
             <div className="realm-eyebrow">
               <span /> STILLROOM · SOMEWHERE TO SETTLE
@@ -199,31 +273,42 @@ export default function Stillroom({
             <p>
               A café. A library. Quiet illustrated company.
               <br />
-              Nothing to prove—just a place to be with your work.
+              Choose a little pool of light. Your seat is waiting.
             </p>
           </div>
-          <div className="study-seat-collection">
-            {studySpots.map((s) => (
+          <div className="map-wayfinding">
+            <span>Four quiet corners. Tap a glowing spot to settle in.</span>
+            <div>
               <button
-                key={s.id}
-                className="study-seat-card"
-                onClick={() => {
-                  setState((v) => ({ ...v, spot: s.id }));
-                  onChime();
-                }}
-                aria-label={`Choose ${s.name}`}
+                onClick={() =>
+                  mapView.current?.scrollTo({
+                    left: 0,
+                    behavior: matchMedia("(prefers-reduced-motion: reduce)")
+                      .matches
+                      ? "instant"
+                      : "smooth",
+                  })
+                }
               >
-                <span className={`seat-preview study-tile-${s.tile}`} />
-                <span className="seat-card-copy">
-                  <small>{s.venue.toUpperCase()}</small>
-                  <b>{s.name}</b>
-                  <span>{s.description}</span>
-                  <i>
-                    Take this seat <ArrowUpRight size={12} />
-                  </i>
-                </span>
+                Café side ←
               </button>
-            ))}
+              <button
+                onClick={() =>
+                  mapView.current?.scrollTo({
+                    left:
+                      mapView.current.scrollWidth * 0.76 -
+                      mapView.current.clientWidth / 2,
+                    behavior: matchMedia("(prefers-reduced-motion: reduce)")
+                      .matches
+                      ? "instant"
+                      : "smooth",
+                  })
+                }
+              >
+                Library side →
+              </button>
+            </div>
+            <small>Drag the room to look around.</small>
           </div>
         </>
       ) : (
@@ -265,35 +350,98 @@ export default function Stillroom({
               </button>
             ))}
           </div>
-          <div className="candle-desk">
-            <div
-              className={`study-candle ${burning ? "burning" : ""} ${finished ? "spent" : ""}`}
-              style={{ "--wax": progress } as React.CSSProperties}
-              role="img"
-              aria-label={
-                burning
-                  ? "A candle burns while your timer runs"
-                  : finished
-                    ? "Your focus candle has finished"
-                    : "An unlit focus candle"
-              }
-            >
-              <div className="candle-halo" />
-              <div className="candle-flame" />
-              <div className="candle-wick" />
+          <div className={`candle-desk desk-ritual-${state.ritual}`}>
+            <div className="study-tabletop" aria-hidden="true">
+              <div className="table-inlay" />
+            </div>
+            <div className="ritual-object-place">
+              <div className="ritual-contact-shadow" />
               <div
-                className="candle-wax"
+                className={`study-candle candle-${state.ritual} ${burning ? "burning" : ""} ${finished ? "spent" : ""}`}
                 style={{ "--wax": progress } as React.CSSProperties}
-              />
-              <div className="candle-dish" />
+                role="img"
+                aria-label={
+                  icy
+                    ? burning
+                      ? "An ice crystal melts slowly in a glass bowl"
+                      : "An ice crystal rests in a glass bowl"
+                    : burning
+                      ? "A candle burns while your timer runs"
+                      : finished
+                        ? "Your focus candle has finished"
+                        : "An unlit focus candle"
+                }
+              >
+                {icy ? (
+                  <>
+                    <div className="ice-bowl">
+                      <div
+                        className="ice-water"
+                        style={{ height: `${12 + (1 - progress) * 22}px` }}
+                      />
+                      <div
+                        className="ice-crystal"
+                        style={{
+                          transform: `translate(-50%,0) scale(${Math.max(0.03, progress)})`,
+                        }}
+                      >
+                        <i />
+                        <i />
+                        <i />
+                      </div>
+                      <span className="bowl-glint" />
+                    </div>
+                    <div className="candle-dish" />
+                  </>
+                ) : (
+                  <>
+                    <div className="candle-halo" />
+                    <div className="candle-flame" />
+                    <div className="candle-wick" />
+                    <div
+                      className="candle-wax"
+                      style={{ "--wax": progress } as React.CSSProperties}
+                    />
+                    <div className="candle-vessel">
+                      <span />
+                      <i>✧</i>
+                    </div>
+                    <div className="candle-dish" />
+                  </>
+                )}
+              </div>
             </div>
             <div className="candle-clock">
+              <label className="ritual-choice">
+                YOUR LITTLE RITUAL
+                <select
+                  aria-label="Desk timer style"
+                  value={state.ritual}
+                  onChange={(e) =>
+                    setState((s) => ({
+                      ...s,
+                      ritual: e.target.value as StudyState["ritual"],
+                    }))
+                  }
+                >
+                  <option value="beeswax">Honeycomb candle</option>
+                  <option value="rose">Rose-glass candle</option>
+                  <option value="moon">Moonstone candle</option>
+                  <option value="ice">Melting ice crystal</option>
+                </select>
+              </label>
               <span className="card-kicker">
-                {finished
-                  ? "A LITTLE LIGHT WELL SPENT"
-                  : burning
-                    ? "ONE SMALL MOMENT AT A TIME"
-                    : "LIGHT A LITTLE INTENTION"}
+                {icy
+                  ? finished
+                    ? "A LITTLE WINTER, GENTLY LET GO"
+                    : burning
+                      ? "LET THE MOMENT MELT SLOWLY"
+                      : "A LITTLE MOMENT OF STILLNESS"
+                  : finished
+                    ? "A LITTLE LIGHT WELL SPENT"
+                    : burning
+                      ? "ONE SMALL MOMENT AT A TIME"
+                      : "LIGHT A LITTLE INTENTION"}
               </span>
               <output
                 aria-label="Candle timer remaining"
@@ -308,7 +456,9 @@ export default function Stillroom({
                     ? "There’s no hurry. Just this little pool of light."
                     : state.paused
                       ? "Your light will wait for you."
-                      : "A quiet timer, measured in candlelight."}
+                      : icy
+                        ? "Watch a little winter soften into water."
+                        : "A quiet timer, measured in candlelight."}
               </p>
               <label className="candle-duration">
                 Minutes
@@ -330,20 +480,26 @@ export default function Stillroom({
                 {burning ? (
                   <button onClick={pause}>
                     <Pause size={13} />
-                    Pause candle
+                    {icy ? "Pause ice timer" : "Pause candle"}
                   </button>
                 ) : (
                   <button onClick={light}>
-                    <Flame size={14} />
-                    {finished
-                      ? "Light another candle"
-                      : state.paused
-                        ? "Relight candle"
-                        : "Light a candle"}
+                    {icy ? <Snowflake size={14} /> : <Flame size={14} />}
+                    {icy
+                      ? finished
+                        ? "Begin another thaw"
+                        : state.paused
+                          ? "Continue melting"
+                          : "Begin melting"
+                      : finished
+                        ? "Light another candle"
+                        : state.paused
+                          ? "Relight candle"
+                          : "Light a candle"}
                   </button>
                 )}
                 <button
-                  aria-label="Reset focus candle"
+                  aria-label="Reset focus timer"
                   onClick={() =>
                     setState((s) => ({ ...s, endsAt: null, paused: null }))
                   }

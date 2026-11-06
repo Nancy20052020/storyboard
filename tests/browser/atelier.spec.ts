@@ -86,7 +86,7 @@ test("letters keep stationery, draggable keepsakes, and sealed writing in the pe
   await page.getByRole("button", { name: /Your postbox/ }).click();
   await page
     .getByRole("complementary", { name: "Your personal postbox" })
-    .getByRole("button", { name: /Tomorrow’s Nancy/ })
+    .getByRole("button", { name: /^To Tomorrow’s Nancy/ })
     .click();
   await expect(
     page.getByRole("textbox", { name: "Write your letter", exact: true }),
@@ -289,7 +289,7 @@ test("phone candle controls remain clickable beside their decorative glow", asyn
   await page.goto("/#study");
   await page
     .getByRole("button", { name: "Choose The rain window", exact: true })
-    .click();
+    .click({ timeout: 3000 });
   const candle = page.getByRole("button", {
     name: "Light a candle",
     exact: true,

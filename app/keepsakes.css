@@ -1,0 +1,1277 @@
+@font-face {
+  font-family: StarwovenHand;
+  src: url("/fonts/caveat.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: StarwovenScript;
+  src: url("/fonts/dancing-script.ttf") format("truetype");
+  font-weight: 400 700;
+  font-display: swap;
+}
+.writing-handwritten {
+  --letter-font: StarwovenHand, cursive;
+  --letter-size: 25px;
+}
+.writing-script {
+  --letter-font: StarwovenScript, cursive;
+  --letter-size: 25px;
+}
+.writing-typewriter {
+  --letter-font: "Courier New", monospace;
+  --letter-size: 15px;
+}
+.writing-classic {
+  --letter-font: Georgia, serif;
+  --letter-size: 17px;
+}
+.letter-paper .letter-body {
+  font-family: var(--letter-font);
+  font-size: var(--letter-size);
+  line-height: 1.65;
+}
+.letter-paper .letter-to,
+.letter-paper .letter-from input {
+  font-family: var(--letter-font);
+}
+.letter-paper .letter-body::placeholder {
+  font-size: var(--letter-size);
+}
+.letter-tools {
+  width: max-content;
+  max-width: 94vw;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.letter-tools > label {
+  gap: 6px;
+}
+.delete-current-letter {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  color: #d2b9a6;
+  font-size: 9px;
+  flex-shrink: 0;
+}
+/* Scene objects are large, tactile places to visit, rather than toolbar icons. */
+.postbox-entry {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid #d2c59f22;
+}
+.personal-postbox .postbox-entry > button:first-child {
+  width: auto;
+  flex: 1;
+  text-align: left;
+  font-size: 12px;
+  padding: 18px 0;
+  min-width: 0;
+}
+.postbox-entry > button > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.postbox-entry > button:last-child {
+  padding: 10px;
+  color: #c6a697;
+}
+.letter-delete-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  background: #0b191be3;
+  backdrop-filter: blur(13px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.letter-delete-dialog {
+  max-width: 420px;
+  background: #24322c;
+  border: 1px solid #c5b48b66;
+  border-radius: 12px;
+  padding: 35px;
+  color: #e1d9c3;
+  text-align: center;
+}
+.letter-delete-dialog h2 {
+  font: 30px Georgia;
+}
+.letter-delete-dialog p {
+  font: 13px/1.8 sans-serif;
+  color: #bfc2b2;
+}
+.letter-delete-dialog button {
+  padding: 12px 15px;
+  margin: 12px 4px 0;
+  border: 1px solid #c5b48b55;
+  border-radius: 5px;
+  font-size: 11px;
+}
+.letter-delete-dialog button:last-child {
+  background: #875a5844;
+  color: #e1b9ad;
+}
+/* The keepsake canvas and the movable stickers share the exact output coordinates. */
+.photo-booth {
+  width: min(1200px, 96vw);
+}
+.booth-layout {
+  grid-template-columns: minmax(0, 1.1fr) minmax(230px, 0.9fr);
+  gap: 30px;
+}
+.booth-live {
+  max-width: 560px;
+  aspect-ratio: 4/3;
+  margin: auto;
+}
+.booth-strip-preview {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  background: transparent;
+  color: #d9ddc9;
+  padding: 5px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.keepsake-composition {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  max-height: none;
+  box-shadow: 0 12px 35px #0006;
+  container-type: inline-size;
+}
+.composition-strip {
+  width: 62%;
+  max-width: 220px;
+}
+.keepsake-composition canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.photo-sticker-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.photo-sticker-layer g {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+  outline: none;
+}
+.photo-sticker-layer g.selected rect,
+.photo-sticker-layer g:focus-visible rect {
+  stroke: #8e7253;
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+}
+.photo-sticker-layer text {
+  user-select: none;
+  pointer-events: none;
+}
+.composition-hint {
+  font: italic 11px/1.7 Georgia;
+  color: #b2beaf;
+  margin: 0;
+  text-align: center;
+}
+.booth-shot-thumbnails {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.booth-shot-thumbnails button {
+  position: relative;
+  width: 68px;
+  height: 53px;
+}
+.booth-shot-thumbnails img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.booth-shot-thumbnails button span {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  background: #273d35;
+  color: #eee6ce;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 16px;
+  width: 16px;
+  height: 16px;
+}
+.booth-templates {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 22px;
+}
+.booth-templates > button {
+  border: 1px solid #c1b68e33;
+  border-radius: 6px;
+  padding: 12px 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  color: #b6c1b3;
+}
+.booth-templates [aria-pressed="true"] {
+  background: #c9c7a520;
+  border-color: #d0c39a;
+  color: #eee3c8;
+}
+.booth-templates b {
+  font: 11px Georgia;
+  font-weight: 400;
+}
+.booth-templates small {
+  font-size: 8px;
+  line-height: 1.5;
+  color: #9fafa1;
+}
+.template-mini {
+  width: 33px;
+  height: 43px;
+  background: #c9cfbe;
+  box-shadow: 0 4px 10px #0003;
+  display: block;
+  border: 4px solid #e0ddcd;
+  background: repeating-linear-gradient(#84998b 0 8px, #dcd9c4 8px 10px);
+}
+.mini-polaroid {
+  width: 39px;
+  height: 39px;
+  border-bottom-width: 9px;
+  background: #8da296;
+  transform: rotate(-5deg);
+}
+.mini-botanical {
+  width: 38px;
+  border: 5px solid #d2ceb1;
+  background:
+    linear-gradient(#8fa089 50%, transparent 50%),
+    linear-gradient(90deg, #82967f 45%, #ccc9b1 45% 55%, #8c9c88 55%);
+  background-size:
+    100% 55%,
+    100% 40%;
+  background-position: top, bottom;
+  background-repeat: no-repeat;
+}
+.mini-postcard {
+  width: 48px;
+  height: 32px;
+  background: #8b9c9a;
+  border-bottom-width: 9px;
+}
+.booth-caption {
+  display: block;
+  font-size: 10px;
+  color: #b4bcaa;
+  margin: 22px 0;
+}
+.booth-caption input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: #0f232654;
+  color: #dfdeca;
+  border: 1px solid #b6b99b40;
+  border-radius: 4px;
+  padding: 10px;
+  font: italic 16px Georgia;
+}
+.booth-sticker-library > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 5px;
+  margin-top: 12px;
+}
+.booth-sticker-library button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  padding: 9px 2px;
+  border: 1px solid #c5c19d22;
+  border-radius: 5px;
+}
+.booth-sticker-library button > span {
+  font: 27px Georgia;
+  color: #c9ba8c;
+}
+.booth-sticker-library small {
+  font-size: 8px;
+  color: #acb7a7;
+}
+.booth-sticker-tools {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 15px 0;
+  font-size: 10px;
+}
+.booth-sticker-tools label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+}
+.booth-sticker-tools input {
+  width: 85px;
+}
+.booth-sticker-tools button {
+  font-size: 10px;
+  color: #d1b5a5;
+}
+.booth-attach {
+  max-width: 360px;
+  background: #576c5c;
+}
+.booth-reset {
+  font-size: 10px;
+  color: #c8cdb9;
+}
+/* Walk into the scene: the four seats are hotspots on one continuous room. */
+.choosing-seat {
+  padding: 0;
+  min-height: 100svh;
+}
+.study-room-map {
+  width: 100%;
+  height: 100svh;
+  position: relative;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #9a986159 #12251e;
+  touch-action: none;
+  cursor: grab;
+}
+.study-map-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 1100px;
+  min-height: 700px;
+}
+.study-map-canvas > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  user-select: none;
+  pointer-events: none;
+}
+.study-map-canvas::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, #071a1c88, transparent 35%),
+    linear-gradient(90deg, #06181555, transparent 40%);
+  pointer-events: none;
+}
+.choosing-seat .study-welcome {
+  position: absolute;
+  left: 4%;
+  top: 145px;
+  width: 320px;
+  pointer-events: none;
+  text-shadow: 0 2px 15px #000;
+  z-index: 2;
+}
+.study-welcome h1 {
+  font-size: 44px;
+}
+.study-welcome p {
+  font-size: 11px;
+}
+.choosing-seat .study-rain {
+  display: none;
+}
+.study-map-spot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  touch-action: manipulation;
+}
+.map-spot-glow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  background: #213c2ed9;
+  border: 1px solid #c5b174;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 8px #c0ae6e13,
+    0 0 26px #e5c77a55;
+  color: #eddbab;
+  transition:
+    box-shadow 0.3s,
+    transform 0.3s;
+}
+.study-map-spot:hover .map-spot-glow,
+.study-map-spot:focus-visible .map-spot-glow {
+  box-shadow:
+    0 0 0 10px #c0ae6e22,
+    0 0 40px #e5c77a88;
+  transform: scale(1.1);
+}
+.map-spot-label {
+  background: #142e29e6;
+  border: 1px solid #c2b37850;
+  border-radius: 5px;
+  padding: 10px 16px;
+  text-align: center;
+  box-shadow: 0 8px 20px #0004;
+  color: #e3d7b9;
+  font: 15px Georgia;
+  white-space: nowrap;
+}
+.map-spot-label small {
+  display: block;
+  letter-spacing: 1.5px;
+  font: 7px sans-serif;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  color: #babc9c;
+}
+.map-spot-label i {
+  display: block;
+  font: 9px sans-serif;
+  margin-top: 8px;
+  color: #cabc93;
+}
+.map-wayfinding {
+  position: absolute;
+  left: 4%;
+  bottom: 140px;
+  z-index: 4;
+  max-width: 360px;
+  background: #142b27cb;
+  backdrop-filter: blur(10px);
+  border: 1px solid #cbb57435;
+  border-radius: 8px;
+  padding: 15px 20px;
+  color: #d3cfb5;
+}
+.map-wayfinding > span {
+  display: block;
+  font: italic 14px Georgia;
+}
+.map-wayfinding > div {
+  display: flex;
+  gap: 30px;
+  margin-top: 14px;
+}
+.map-wayfinding button {
+  font-size: 11px;
+  padding: 7px 0;
+  color: #d8c396;
+}
+.map-wayfinding small {
+  display: block;
+  font-size: 8px;
+  color: #adb79e;
+  margin-top: 6px;
+}
+/* A foreground oak table supports both the ritual vessel and its open notebook. */
+.candle-desk {
+  right: 6%;
+  bottom: 230px;
+  width: min(650px, 59vw);
+  display: grid;
+  grid-template-columns: minmax(140px, 0.75fr) minmax(230px, 1fr);
+  gap: 15px;
+  align-items: end;
+  padding: 0 25px 30px;
+  isolation: isolate;
+}
+.study-tabletop {
+  position: absolute;
+  left: -38px;
+  right: -38px;
+  top: 58%;
+  bottom: -18px;
+  border-radius: 44% 42% 7% 9% / 28% 27% 6% 7%;
+  z-index: -1;
+  background:
+    repeating-linear-gradient(2deg, #bc945113 0 1px, transparent 2px 7px),
+    linear-gradient(165deg, #7e5838, #493120 50%, #64432c 75%, #2b1f18);
+  border: 1px solid #c0935c55;
+  box-shadow:
+    inset 0 5px 12px #dfb67a33,
+    inset 0 -12px 3px #241a12,
+    0 22px 30px #0006;
+  transform: perspective(800px) rotateX(15deg);
+}
+.table-inlay {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid #b58d5233;
+  border-radius: inherit;
+}
+.ritual-object-place {
+  position: relative;
+  display: grid;
+  place-items: end center;
+  height: 260px;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+.ritual-contact-shadow {
+  position: absolute;
+  bottom: -3px;
+  width: 165px;
+  height: 24px;
+  background: #120f0bbd;
+  border-radius: 50%;
+  filter: blur(10px);
+}
+.candle-desk .study-candle {
+  margin: 0;
+  height: 220px;
+  width: 160px;
+}
+.candle-desk .candle-wax {
+  border-radius: 12px 12px 3px 3px;
+  background:
+    repeating-linear-gradient(60deg, #9c753a12 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(-60deg, #9c753a22 0 1px, transparent 1px 8px),
+    linear-gradient(90deg, #bc9b53, #efd8a0 45%, #ad873f);
+  box-shadow:
+    inset -6px 0 7px #9d742d44,
+    inset 5px 0 8px #ffe5a73b;
+}
+.candle-wax::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 0;
+  width: 100%;
+  height: 13px;
+  background: radial-gradient(
+    ellipse,
+    #635135 5%,
+    #b9a16a 10%,
+    #dfc690 60%,
+    #f5dfa6
+  );
+  border-radius: 50%;
+}
+.candle-wax::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 7px;
+  width: 8px;
+  height: 34px;
+  border-radius: 30%;
+  background: linear-gradient(#f4dda6, #dfc185);
+  box-shadow: -37px 12px 0 -2px #ead29b;
+}
+.candle-desk .candle-dish {
+  width: 145px;
+  height: 19px;
+  background: linear-gradient(#bcad75, #7b6d44 45%, #4b492e);
+  border: 1px solid #c7b97766;
+  box-shadow: 0 6px 4px #0005;
+}
+.candle-vessel {
+  display: none;
+}
+.candle-rose .candle-vessel {
+  display: block;
+  position: absolute;
+  bottom: 15px;
+  width: 96px;
+  height: 112px;
+  border: 2px solid #e0b9c16b;
+  border-radius: 10px 10px 23px 23px;
+  background: linear-gradient(
+    95deg,
+    #84576b80,
+    #dc9fb844 45%,
+    #eed2ce66 50%,
+    #7b456880
+  );
+  box-shadow:
+    inset 4px 0 4px #eed4d84d,
+    inset -7px 0 9px #3c233066,
+    3px 7px 10px #0003;
+  backdrop-filter: blur(1px);
+}
+.candle-vessel > i {
+  display: block;
+  color: #d8c199;
+  position: absolute;
+  top: 45%;
+  width: 100%;
+  text-align: center;
+  font: 26px Georgia;
+  font-style: normal;
+}
+.candle-rose .candle-vessel::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -2px;
+  right: -2px;
+  height: 11px;
+  border: 2px solid #e2c4bd8c;
+  border-radius: 50%;
+}
+.candle-rose .candle-wax {
+  background: linear-gradient(90deg, #c4a0a2, #f0d6c9, #bd939a);
+  width: 70px;
+}
+.candle-moon .candle-vessel {
+  display: block;
+  position: absolute;
+  bottom: 15px;
+  width: 108px;
+  height: 70px;
+  border-radius: 8px 8px 48px 48px;
+  background: radial-gradient(
+    ellipse at 30% 20%,
+    #dee5d3,
+    #839b8e 65%,
+    #586e66
+  );
+  border-top: 5px solid #d6d9bf;
+  box-shadow:
+    inset -10px -7px 12px #294a4144,
+    0 7px 8px #0005;
+}
+.candle-moon .candle-vessel::before,
+.candle-moon .candle-vessel::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: 30px;
+  height: 60px;
+  border-radius: 90% 20% 70% 30%;
+  background: linear-gradient(#d2ddcc, #7a9888);
+  border: 1px solid #b6c3a3;
+  transform: rotate(-35deg);
+  z-index: -1;
+}
+.candle-moon .candle-vessel::before {
+  left: 5px;
+}
+.candle-moon .candle-vessel::after {
+  right: 5px;
+  transform: rotate(35deg);
+}
+.candle-moon .candle-vessel > i {
+  font-size: 19px;
+  top: 17px;
+}
+.candle-moon .candle-wax {
+  background: linear-gradient(90deg, #a6b9a3, #e0e8ce, #8fa68f);
+}
+.candle-desk .candle-clock {
+  position: relative;
+  background: linear-gradient(90deg, #d0c5a9, #e1d9bf 6%, #ded3b6 97%, #ac9875);
+  color: #4f5547;
+  border: 1px solid #a99a75;
+  border-radius: 3px 12px 5px 4px;
+  padding: 22px 25px 20px;
+  box-shadow:
+    inset 8px 0 6px #8c77562b,
+    5px 8px 13px #0005;
+  transform: rotate(1deg);
+  text-align: center;
+}
+.candle-clock .card-kicker {
+  color: #69725b;
+  letter-spacing: 1px;
+}
+.candle-clock p {
+  color: #6b725e;
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+.candle-clock output {
+  font-size: 43px;
+  margin: 9px 0;
+  color: #4a5e50;
+}
+.candle-clock .candle-duration {
+  margin: 12px;
+}
+.candle-clock .candle-duration input {
+  background: #d1cbb0;
+  color: #485847;
+  border-color: #9b9e7b;
+}
+.candle-actions {
+  gap: 6px;
+}
+.candle-actions button {
+  background: #526652;
+  color: #ece6cd;
+  border-color: #a4aa86;
+  font-size: 10px;
+  padding: 10px 12px;
+}
+.ritual-choice {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1.7px;
+  color: #748063;
+  margin-bottom: 20px;
+}
+.ritual-choice select {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #a6a687;
+  padding: 9px 2px;
+  color: #4d604e;
+  outline: none;
+  font: italic 16px Georgia;
+  letter-spacing: 0;
+  text-align: center;
+}
+.ritual-choice select option {
+  background: #e2d7bd;
+  color: #4d604e;
+}
+.study-intention {
+  bottom: 265px;
+  max-width: 30%;
+}
+.ice-bowl {
+  position: absolute;
+  bottom: 13px;
+  width: 144px;
+  height: 74px;
+  border: 2px solid #c5dfdf94;
+  border-top-color: #e2f0ebcc;
+  border-radius: 9px 9px 70px 70px;
+  background: linear-gradient(110deg, #d4e8e822, #a8c4c42b, #718c9633);
+  box-shadow:
+    inset 6px 0 9px #c9e6e43b,
+    inset -7px -9px 14px #577d8655,
+    0 6px 10px #0004;
+}
+.ice-bowl::before {
+  content: "";
+  position: absolute;
+  top: -11px;
+  left: -2px;
+  right: -2px;
+  height: 20px;
+  border: 2px solid #d4ede594;
+  border-radius: 50%;
+  background: #b6d9df11;
+}
+.ice-water {
+  position: absolute;
+  bottom: 11px;
+  left: 11px;
+  right: 11px;
+  border-radius: 30% 30% 50% 50%;
+  background: linear-gradient(#b7d9d670, #78a5b474);
+  border-top: 1px solid #d6edeb;
+  transition: height 1s;
+}
+.ice-crystal {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  width: 75px;
+  height: 105px;
+  transform-origin: 50% 100%;
+  transition: transform 1s linear;
+  filter: drop-shadow(0 5px 3px #255a6555);
+}
+.ice-crystal > i {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0, 96% 32%, 85% 91%, 26% 100%, 0 61%, 10% 22%);
+  background: linear-gradient(
+    130deg,
+    #e0f5eec9,
+    #c3e1ea77 35%,
+    #789ebda1 36% 60%,
+    #d5f3efb3 62%,
+    #8daec0a8
+  );
+  border: 1px solid #defff6;
+}
+.ice-crystal > i:nth-child(2) {
+  clip-path: polygon(50% 0, 60% 62%, 26% 100%, 0 61%);
+  background: linear-gradient(90deg, #e8ffffaa, #87b5ca55);
+}
+.ice-crystal > i:nth-child(3) {
+  clip-path: polygon(10% 22%, 96% 32%, 60% 62%);
+  background: #efffffa1;
+}
+.bowl-glint {
+  position: absolute;
+  top: 15px;
+  left: 12px;
+  width: 4px;
+  height: 30px;
+  background: #e9fff57a;
+  transform: rotate(-15deg);
+  border-radius: 50%;
+}
+@media (max-width: 1000px) {
+  .letter-atelier {
+    padding-top: 150px;
+  }
+  .letter-room-heading {
+    position: relative;
+    inset: auto;
+    width: 88%;
+    max-width: 600px;
+    margin: 0 6%;
+  }
+  .letter-desk {
+    margin: 0 auto;
+    width: 80%;
+    padding: 20px 0 245px;
+  }
+  .candle-desk {
+    right: 5%;
+    width: 58%;
+    grid-template-columns: 120px minmax(190px, 1fr);
+    gap: 5px;
+    padding: 0 10px 20px;
+  }
+  .candle-desk .candle-clock {
+    padding: 18px 15px;
+  }
+  .study-intention {
+    width: 30%;
+  }
+  .photo-booth {
+    padding: 30px;
+  }
+  .booth-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.8fr);
+    gap: 20px;
+  }
+}
+@media (max-width: 650px) {
+  .letter-room-heading h1 {
+    font-size: 34px;
+  }
+  .letter-desk {
+    width: 89%;
+    padding-top: 5px;
+  }
+  .letter-desk-meta {
+    font-size: 8px;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .letter-tools {
+    min-height: 94px;
+    padding: 7px 8px;
+    gap: 4px;
+  }
+  .letter-tools > label {
+    width: 30%;
+    flex: 1;
+    justify-content: center;
+    font-size: 8px;
+  }
+  .letter-tools select {
+    max-width: 90px;
+    font-size: 9px;
+  }
+  .letter-tools > button {
+    min-width: 28%;
+    flex: 1;
+  }
+  .personal-postbox .postbox-entry > button:first-child {
+    font-size: 12px;
+  }
+  .letter-paper .letter-body {
+    font-size: max(16px, var(--letter-size));
+  }
+  .photo-booth {
+    padding: 25px 17px;
+  }
+  .booth-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .booth-strip-preview {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 12px;
+    grid-template-columns: none;
+  }
+  .booth-templates {
+    gap: 5px;
+  }
+  .booth-templates > button {
+    padding: 10px 3px;
+  }
+  .booth-templates b {
+    font-size: 10px;
+  }
+  .booth-templates small {
+    display: none;
+  }
+  .booth-sticker-library small {
+    font-size: 7px;
+  }
+  .booth-sticker-library button > span {
+    font-size: 24px;
+  }
+  .keepsake-composition {
+    max-width: 300px;
+  }
+  .composition-strip {
+    max-width: 185px;
+  }
+  .booth-attach {
+    width: 100%;
+  }
+  .study-map-canvas {
+    min-width: calc(100svh * 1.777);
+    min-height: 100svh;
+  }
+  .choosing-seat .study-welcome {
+    top: 145px;
+    left: 6%;
+    width: 260px;
+  }
+  .study-welcome h1 {
+    font-size: 35px;
+    margin: 16px 0;
+  }
+  .study-welcome p {
+    font-size: 10px;
+    max-width: 235px;
+  }
+  .map-wayfinding {
+    left: 5%;
+    right: 5%;
+    bottom: 125px;
+    padding: 12px 16px;
+    max-width: none;
+  }
+  .map-wayfinding > span {
+    font-size: 12px;
+  }
+  .map-wayfinding > div {
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+  .map-spot-glow {
+    width: 38px;
+    height: 38px;
+  }
+  .map-spot-label {
+    font-size: 13px;
+    padding: 9px 13px;
+  }
+  .study-map-spot {
+    gap: 7px;
+  }
+  .map-spot-label small {
+    font-size: 6px;
+  }
+  .map-spot-label i {
+    font-size: 8px;
+  }
+  .candle-desk {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 6px;
+    margin: 35px 0 12px;
+    padding: 0 4px 22px;
+  }
+  .candle-desk .candle-clock {
+    max-width: none;
+    padding: 18px 12px;
+  }
+  .candle-desk .study-candle {
+    width: 105px;
+    height: 210px;
+    transform: scale(0.8);
+    transform-origin: 50% 100%;
+  }
+  .ritual-object-place {
+    height: 240px;
+    margin-bottom: 12px;
+    transform: translateX(-3px);
+  }
+  .ritual-contact-shadow {
+    width: 95px;
+    bottom: -3px;
+    height: 18px;
+  }
+  .study-tabletop {
+    left: -20px;
+    right: -20px;
+    top: 58%;
+    bottom: -10px;
+  }
+  .candle-clock output {
+    font-size: 37px;
+  }
+  .candle-clock p {
+    font-size: 10px;
+    line-height: 1.6;
+    margin: 10px 0;
+  }
+  .candle-clock .card-kicker {
+    font-size: 6px;
+  }
+  .candle-clock .candle-duration {
+    margin: 10px 0;
+  }
+  .candle-actions button {
+    padding: 10px 9px;
+    font-size: 9px;
+  }
+  .ritual-choice {
+    font-size: 6px;
+    margin-bottom: 15px;
+    letter-spacing: 1.5px;
+  }
+  .ritual-choice select {
+    font-size: 14px;
+    padding: 7px 0;
+  }
+  .study-intention {
+    max-width: none;
+    width: 100%;
+    margin-top: 30px;
+  }
+  .stillroom-scene.seated {
+    padding-bottom: 240px;
+    gap: 20px;
+  }
+  .study-seat-heading h1 {
+    font-size: 36px;
+    margin: 15px 0;
+  }
+  .study-seat-heading p {
+    font-size: 11px;
+  }
+  .study-weather-controls > button {
+    font-size: 10px;
+    padding: 9px 12px;
+  }
+  .study-tool-tray {
+    margin-top: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+}
+@media (max-width: 650px) {
+  .stillroom-scene.seated {
+    padding-top: 135px;
+    gap: 18px;
+  }
+  .study-seat-heading > button {
+    margin-bottom: 18px;
+  }
+  .study-seat-heading h1 {
+    font-size: 32px;
+    margin: 10px 0;
+  }
+  .study-seat-heading p {
+    font-size: 10px;
+    line-height: 1.7;
+    margin: 8px 0 0;
+  }
+  .candle-desk {
+    margin-top: 10px;
+  }
+  .candle-desk .candle-clock {
+    padding: 16px 11px;
+  }
+  .candle-clock p {
+    font-size: 10px;
+  }
+  .ritual-choice {
+    margin-bottom: 12px;
+  }
+}
+.scene-postbox,
+.scene-photo-pavilion {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  background: none;
+  border: 0;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  filter: drop-shadow(6px 12px 10px #0006);
+  transition:
+    filter 0.3s,
+    transform 0.3s;
+  isolation: auto;
+}
+.scene-postbox {
+  left: 4%;
+  right: auto;
+  top: 420px;
+  width: 250px;
+  height: 390px;
+}
+.scene-photo-pavilion {
+  right: 2%;
+  left: auto;
+  top: 455px;
+  width: 210px;
+  height: 350px;
+}
+.atelier-prop-art {
+  display: block;
+  flex-shrink: 0;
+  background-image: url("/art/atelier-objects.webp");
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  width: 300px;
+  height: 330px;
+  pointer-events: none;
+}
+.prop-postbox {
+  background-position: 0 0;
+}
+.prop-photo-pavilion {
+  background-position: 100% 0;
+  height: 305px;
+  width: 265px;
+}
+.scene-postbox:hover,
+.scene-photo-pavilion:hover {
+  filter: drop-shadow(0 0 18px #d1be7d66);
+  transform: translateY(-4px);
+}
+.scene-postbox > span:last-child,
+.pavilion-sign {
+  display: block;
+  text-align: center;
+  font: italic 20px Georgia;
+  color: #e3d8b9;
+  text-shadow: 0 2px 8px #10241d;
+}
+.scene-postbox small,
+.pavilion-sign small {
+  display: block;
+  font: 9px sans-serif;
+  color: #c9c8b2;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}
+@media (max-width: 1000px) {
+  .scene-postbox,
+  .scene-photo-pavilion {
+    position: relative;
+    inset: auto;
+    display: inline-flex;
+    vertical-align: bottom;
+    width: 40%;
+    height: 360px;
+    margin: 25px 0 25px 7%;
+    gap: 10px;
+  }
+  .scene-photo-pavilion {
+    margin-left: 3%;
+    height: 340px;
+  }
+  .atelier-prop-art {
+    width: 275px;
+    height: 300px;
+  }
+  .prop-photo-pavilion {
+    width: 250px;
+    height: 280px;
+  }
+}
+@media (max-width: 650px) {
+  .scene-postbox,
+  .scene-photo-pavilion {
+    height: 290px;
+    width: 40%;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    gap: 8px;
+  }
+  .scene-photo-pavilion {
+    height: 280px;
+  }
+  .atelier-prop-art {
+    width: 210px;
+    height: 240px;
+  }
+  .prop-photo-pavilion {
+    width: 195px;
+    height: 230px;
+  }
+  .scene-postbox > span:last-child,
+  .pavilion-sign {
+    font-size: 16px;
+  }
+  .scene-postbox small,
+  .pavilion-sign small {
+    font-size: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-postbox,
+  .scene-photo-pavilion,
+  .map-spot-glow,
+  .ice-water,
+  .ice-crystal {
+    transition: none;
+  }
+}
+.map-spot-label i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+/* A greeting should not intercept a click on the room behind it. */
+.aster-speech {
+  pointer-events: none;
+}
+.aster-speech button {
+  pointer-events: auto;
+}

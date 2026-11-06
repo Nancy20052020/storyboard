@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   Mail,
   Plus,
@@ -20,6 +21,7 @@ import {
   vaultAll,
   vaultGet,
   vaultPut,
+  vaultDelete,
   type LocalMedia,
 } from "@/lib/local-vault";
 import PhotoBooth from "./PhotoBooth";
@@ -39,11 +41,13 @@ type Letter = {
   body: string;
   paper: "ivory" | "rose" | "midnight";
   ink: "umber" | "violet" | "forest";
+  writing?: "classic" | "handwritten" | "script" | "typewriter";
   accessories: Accessory[];
   createdAt: string;
   postedAt: string | null;
 };
 const key = "starwoven-letter-active";
+const recoveryKey = "starwoven-letter-recovery";
 function blank(): Letter {
   return {
     id: crypto.randomUUID(),
@@ -52,6 +56,7 @@ function blank(): Letter {
     body: "",
     paper: "ivory",
     ink: "umber",
+    writing: "classic",
     accessories: [],
     createdAt: new Date().toISOString(),
     postedAt: null,
@@ -68,6 +73,8 @@ function valid(v: unknown): v is Letter {
     l.body.length <= 20000 &&
     ["ivory", "rose", "midnight"].includes(l.paper) &&
     ["umber", "violet", "forest"].includes(l.ink) &&
+    (l.writing === undefined ||
+      ["classic", "handwritten", "script", "typewriter"].includes(l.writing)) &&
     Array.isArray(l.accessories) &&
     l.accessories.length <= 30 &&
     l.accessories.every(
@@ -111,8 +118,11 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
     [activeAccessory, setActiveAccessory] = useState<string | null>(null),
     [photos, setPhotos] = useState<Record<string, string>>({}),
     [folding, setFolding] = useState(false),
-    [message, setMessage] = useState("");
-  const current = useRef(letter),
+    [message, setMessage] = useState(""),
+    [deleting, setDeleting] = useState<Letter | null>(null);
+  const deleted = useRef(new Set<string>()),
+    saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null),
+    current = useRef(letter),
     paper = useRef<HTMLDivElement>(null),
     drag = useRef<{
       id: string;
@@ -131,11 +141,20 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
     void vaultAll<Letter>("letters")
       .then((items) => {
         if (!mounted.current) return;
-        const list = items
+        let list = items
           .filter(valid)
           .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+        let active: string | null = null;
+        try {
+          active = localStorage.getItem(key);
+          const raw = localStorage.getItem(recoveryKey);
+          if (raw) {
+            const recovered = JSON.parse(raw);
+            if (valid(recovered) && !recovered.postedAt)
+              list = [recovered, ...list.filter((l) => l.id !== recovered.id)];
+          }
+        } catch {}
         setLetters(list);
-        const active = localStorage.getItem(key);
         const chosen =
           list.find((l) => l.id === active && !l.postedAt) ||
           list.find((l) => !l.postedAt) ||
@@ -156,19 +175,23 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
     return () => {
       mounted.current = false;
       const l = current.current;
-      if (l) void vaultPut("letters", l).catch(() => {});
+      if (l && !deleted.current.has(l.id))
+        void vaultPut("letters", l).catch(() => {});
       urls.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
   useEffect(() => {
-    if (!ready || !letter) return;
+    if (!ready || !letter || deleted.current.has(letter.id)) return;
     try {
       localStorage.setItem(key, letter.id);
+      localStorage.setItem(recoveryKey, JSON.stringify(letter));
     } catch {}
+    setSaved(false);
     const timeout = setTimeout(() => {
+      if (deleted.current.has(letter.id)) return;
       void vaultPut("letters", letter)
         .then(() => {
-          if (mounted.current) {
+          if (mounted.current && !deleted.current.has(letter.id)) {
             setSaved(true);
             setLetters((items) => [
               letter,
@@ -180,6 +203,7 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
           if (mounted.current) setSaved(false);
         });
     }, 300);
+    saveTimer.current = timeout;
     return () => clearTimeout(timeout);
   }, [letter, ready]);
   useEffect(() => {
@@ -204,6 +228,35 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
       cancelled = true;
     };
   }, [letter, photos]);
+  useEffect(() => {
+    if (!deleting) return;
+    const previous = document.activeElement as HTMLElement,
+      overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const dialog = document.querySelector(".letter-delete-dialog");
+    const buttons = dialog?.querySelectorAll<HTMLButtonElement>("button");
+    buttons?.[0]?.focus();
+    const keys = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDeleting(null);
+      if (e.key === "Tab" && buttons?.length) {
+        const first = buttons[0],
+          last = buttons[buttons.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", keys);
+    return () => {
+      document.removeEventListener("keydown", keys);
+      document.body.style.overflow = overflow;
+      if (previous?.isConnected) previous.focus();
+    };
+  }, [deleting]);
   const closeBooth = useCallback(() => setBooth(false), []);
   function update(p: Partial<Letter>) {
     setLetter((l) => (l ? { ...l, ...p } : l));
@@ -281,6 +334,45 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
     setPostbox(false);
     setActiveAccessory(null);
   }
+  async function deleteLetter(target: Letter) {
+    deleted.current.add(target.id);
+    if (current.current?.id === target.id && saveTimer.current)
+      clearTimeout(saveTimer.current);
+    try {
+      await vaultDelete("letters", target.id);
+      setLetters((items) => items.filter((l) => l.id !== target.id));
+      if (current.current?.id === target.id) {
+        try {
+          localStorage.removeItem(recoveryKey);
+        } catch {}
+        const next = blank();
+        current.current = next;
+        setLetter(next);
+        setFolding(false);
+        setActiveAccessory(null);
+      }
+      setDeleting(null);
+      setMessage("The letter has been removed from your postbox.");
+      for (const a of target.accessories) {
+        if (
+          a.mediaId &&
+          !letters.some(
+            (l) =>
+              l.id !== target.id &&
+              l.accessories.some((k) => k.mediaId === a.mediaId),
+          )
+        )
+          void vaultDelete("media", a.mediaId).catch(() => {});
+      }
+    } catch {
+      deleted.current.delete(target.id);
+      if (current.current?.id === target.id)
+        setLetter((l) => (l ? { ...l } : l));
+      setMessage(
+        "This letter could not be deleted. It is still kept in your postbox.",
+      );
+    }
+  }
   const accessory = letter?.accessories.find((a) => a.id === activeAccessory);
   if (!letter) return <div className="realm-loading">Opening the atelier…</div>;
   return (
@@ -302,19 +394,29 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
         </p>
       </div>
       <button
-        className="postbox-button"
+        className="postbox-button scene-postbox"
         onClick={() => setPostbox((v) => !v)}
         aria-expanded={postbox}
       >
-        <span className="brass-postbox" aria-hidden="true">
-          <Mail size={28} />
-          <i />
-        </span>
+        <span className="atelier-prop-art prop-postbox" aria-hidden="true" />
         <span>
           Your postbox
           <small>
             {letters.filter((l) => l.postedAt).length} sealed letters
           </small>
+        </span>
+      </button>
+      <button
+        className="scene-photo-pavilion"
+        aria-label="Enter the garden photo booth"
+        onClick={() => setBooth(true)}
+      >
+        <span
+          className="atelier-prop-art prop-photo-pavilion"
+          aria-hidden="true"
+        />
+        <span className="pavilion-sign">
+          Moonlight studio<small>Step inside for a photograph</small>
         </span>
       </button>
       <div className={`letter-desk ${folding ? "letter-folded" : ""}`}>
@@ -325,11 +427,19 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
           </span>
           <span className={saved ? "" : "storage-warning"}>
             {saved ? "Saved on this device" : "Changes may not be saved"}
-          </span>
+          </span>{" "}
+          <button
+            className="delete-current-letter"
+            aria-label="Delete current letter"
+            onClick={() => setDeleting(letter)}
+          >
+            <Trash2 size={12} />
+            Delete this letter
+          </button>
         </div>
         <div
           ref={paper}
-          className={`letter-paper paper-${letter.paper} ink-${letter.ink}`}
+          className={`letter-paper paper-${letter.paper} ink-${letter.ink} writing-${letter.writing || "classic"}`}
           onClick={(e) => {
             if (e.target === e.currentTarget) setActiveAccessory(null);
           }}
@@ -523,6 +633,21 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
             <option value="forest">Forest</option>
           </select>
         </label>
+        <label>
+          Writing
+          <select
+            aria-label="Letter writing style"
+            value={letter.writing || "classic"}
+            onChange={(e) =>
+              update({ writing: e.target.value as Letter["writing"] })
+            }
+          >
+            <option value="classic">Literary serif</option>
+            <option value="handwritten">Handwritten</option>
+            <option value="script">Love-letter script</option>
+            <option value="typewriter">Old typewriter</option>
+          </select>
+        </label>
         <button
           onClick={() => setAccessoriesOpen((v) => !v)}
           aria-expanded={accessoriesOpen}
@@ -672,21 +797,52 @@ export default function LetterAtelier({ onChime }: { onChime: () => void }) {
           </button>
           <div>
             {letters.map((l) => (
-              <button key={l.id} onClick={() => void openLetter(l)}>
-                <Mail size={19} />
-                <span>
-                  To {l.to || "someone, someday"}
-                  <small>
-                    {l.postedAt ? "Sealed" : "Draft"} ·{" "}
-                    {l.body.slice(0, 65) || "A blank page, waiting"}
-                  </small>
-                </span>
-                <ChevronLeft size={12} />
-              </button>
+              <div className="postbox-entry" key={l.id}>
+                <button onClick={() => void openLetter(l)}>
+                  <Mail size={19} />
+                  <span>
+                    To {l.to || "someone, someday"}
+                    <small>
+                      {l.postedAt ? "Sealed" : "Draft"} ·{" "}
+                      {l.body.slice(0, 65) || "A blank page, waiting"}
+                    </small>
+                  </span>
+                  <ChevronLeft size={12} />
+                </button>
+                <button
+                  aria-label={`Delete letter to ${l.to || "someone, someday"}`}
+                  onClick={() => setDeleting(l)}
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             ))}
           </div>
         </aside>
       )}
+      {deleting &&
+        createPortal(
+          <div className="letter-delete-backdrop">
+            <section
+              className="letter-delete-dialog"
+              role="alertdialog"
+              aria-modal="true"
+              aria-label="Delete this letter?"
+            >
+              <Trash2 size={24} />
+              <h2>Let this letter go?</h2>
+              <p>
+                To {deleting.to || "someone, someday"}. This removes the letter
+                and its photo keepsakes from this device. It cannot be undone.
+              </p>
+              <button onClick={() => setDeleting(null)}>Keep my letter</button>
+              <button onClick={() => void deleteLetter(deleting)}>
+                Delete letter permanently
+              </button>
+            </section>
+          </div>,
+          document.body,
+        )}
       {booth && (
         <PhotoBooth onClose={closeBooth} onAttach={(id) => add("photo", id)} />
       )}{" "}

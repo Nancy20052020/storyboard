@@ -11,8 +11,7 @@ export default function useRealmAudio(place: string) {
     [error, setError] = useState("");
   const context = useRef<AudioContext | null>(null),
     master = useRef<GainNode | null>(null),
-    voices = useRef<OscillatorNode[]>([]),
-    melody = useRef(false);
+    voices = useRef<OscillatorNode[]>([]);
   useEffect(
     () => () => {
       void context.current?.close();
@@ -53,20 +52,17 @@ export default function useRealmAudio(place: string) {
     }
     await context.current!.resume();
   }
-  const stopMelody = useCallback(() => {
-    melody.current = false;
+  const muteAmbient = useCallback(() => {
+    if (context.current && master.current) {
+      master.current.gain.cancelScheduledValues(context.current.currentTime);
+      master.current.gain.setTargetAtTime(0, context.current.currentTime, 0.08);
+    }
+    setSound(false);
   }, []);
   async function startMelody() {
     try {
       await prepareAudio();
-      master.current!.gain.cancelScheduledValues(context.current!.currentTime);
-      master.current!.gain.setTargetAtTime(
-        0,
-        context.current!.currentTime,
-        0.08,
-      );
-      setSound(false);
-      melody.current = true;
+      muteAmbient();
       setError("");
     } catch {
       setError("Your browser could not start audio. You can still explore.");
@@ -99,6 +95,7 @@ export default function useRealmAudio(place: string) {
   }
   function chime() {
     if (!sound || !context.current || !master.current) return;
+    muteAmbient();
     const ctx = context.current,
       o = ctx.createOscillator(),
       g = ctx.createGain();
@@ -109,7 +106,7 @@ export default function useRealmAudio(place: string) {
     g.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 2);
     o.connect(g);
-    g.connect(master.current);
+    g.connect(ctx.destination);
     o.start();
     o.stop(ctx.currentTime + 2.1);
     o.onended = () => {
@@ -117,9 +114,15 @@ export default function useRealmAudio(place: string) {
       g.disconnect();
     };
   }
-  function playNote(frequency: number, kind: string) {
-    if ((!sound && !melody.current) || !context.current) return;
-    const ctx = context.current;
+  async function playNote(frequency: number, kind: string) {
+    try {
+      await prepareAudio();
+    } catch {
+      setError("This note could not play. Please try again.");
+      return;
+    }
+    muteAmbient();
+    const ctx = context.current!;
     const oscillator = ctx.createOscillator(),
       harmonic = ctx.createOscillator(),
       envelope = ctx.createGain();
@@ -147,5 +150,5 @@ export default function useRealmAudio(place: string) {
       envelope.disconnect();
     };
   }
-  return { sound, toggle, chime, playNote, startMelody, stopMelody, error };
+  return { sound, toggle, chime, playNote, startMelody, muteAmbient, error };
 }

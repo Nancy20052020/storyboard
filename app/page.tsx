@@ -29,6 +29,7 @@ import "./enchanted.css";
 import "./immersive.css";
 import "./starlight.css";
 import "./atelier.css";
+import "./keepsakes.css";
 const Observatory = dynamic(() => import("@/components/Observatory"), {
   loading: () => <div className="realm-loading">Gathering your stars…</div>,
 });
@@ -108,7 +109,7 @@ export default function Home() {
     [showWelcome, setShowWelcome] = useState(false),
     [toast, setToast] = useState(""),
     [musicOpen, setMusicOpen] = useState(false);
-  const { sound, toggle, chime, playNote, startMelody, stopMelody, error } =
+  const { sound, toggle, chime, playNote, startMelody, muteAmbient, error } =
     useRealmAudio(place);
   const heading = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -262,22 +263,23 @@ export default function Home() {
         ) : place === "garden" ? (
           <Everbloom
             onStartMelody={startMelody}
-            onStopMelody={stopMelody}
             onNote={playNote}
             onOpenMusic={() => setMusicOpen(true)}
           />
         ) : place === "letters" ? (
           <LetterAtelier onChime={chime} />
         ) : (
-          <Stillroom onChime={chime} onOpenMusic={() => setMusicOpen(true)} />
+          <Stillroom
+            onChime={chime}
+            onOpenMusic={() => setMusicOpen(true)}
+            onStartSound={muteAmbient}
+          />
         )}
       </div>
       <PersonalMusic
         open={musicOpen}
         onClose={() => setMusicOpen(false)}
-        onStartPlaying={() => {
-          if (sound) void toggle();
-        }}
+        onStartPlaying={muteAmbient}
       />
       <MysticCompanion place={place} onChime={chime} />
       <nav className="island-dock portal-rail" aria-label="Island navigation">
