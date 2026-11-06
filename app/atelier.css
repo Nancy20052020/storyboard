@@ -1828,3 +1828,7 @@
     overflow: auto;
   }
 }
+/* Candlelight is decoration; it must never catch clicks on the timer. */
+.study-candle {
+  pointer-events: none;
+}

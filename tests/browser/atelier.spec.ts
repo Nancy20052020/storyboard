@@ -281,3 +281,26 @@ test("home copy flows without overlap and all six islands fit a phone width", as
     ).toBe(true);
   }
 });
+
+test("phone candle controls remain clickable beside their decorative glow", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#study");
+  await page
+    .getByRole("button", { name: "Choose The rain window", exact: true })
+    .click();
+  const candle = page.getByRole("button", {
+    name: "Light a candle",
+    exact: true,
+  });
+  const bounds = (await candle.boundingBox())!,
+    rail = (await page.locator(".portal-rail").boundingBox())!,
+    tray = (await page.locator(".study-tool-tray").boundingBox())!;
+  expect(bounds.y + bounds.height).toBeLessThan(rail.y);
+  expect(bounds.y + bounds.height).toBeLessThan(tray.y);
+  await candle.click();
+  await expect(
+    page.getByRole("button", { name: "Pause candle", exact: true }),
+  ).toBeVisible();
+});
