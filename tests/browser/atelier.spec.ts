@@ -304,3 +304,51 @@ test("phone candle controls remain clickable beside their decorative glow", asyn
     page.getByRole("button", { name: "Pause candle", exact: true }),
   ).toBeVisible();
 });
+
+test("flower melody mutes ambient drones while its own notes keep playing", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const gains: GainNode[] = [];
+    const original = AudioContext.prototype.createGain;
+    AudioContext.prototype.createGain = function () {
+      const node = original.call(this);
+      gains.push(node);
+      return node;
+    };
+    (window as any).realmAudioGains = gains;
+  });
+  await page.goto("/#garden");
+  await page
+    .getByRole("button", { name: "Enable ambient sound", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Mute ambient sound", exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).realmAudioGains[0].gain.value),
+    )
+    .toBeGreaterThan(0.1);
+  await page
+    .getByRole("button", { name: "Garden melody", exact: true })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Enable ambient sound", exact: true }),
+  ).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as any).realmAudioGains[0].gain.value),
+    )
+    .toBeLessThan(0.001);
+  const count = await page.evaluate(
+    () => (window as any).realmAudioGains.length,
+  );
+  await expect
+    .poll(() => page.evaluate(() => (window as any).realmAudioGains.length))
+    .toBeGreaterThan(count);
+  await page.getByRole("button", { name: "Pause melody", exact: true }).click();
+  await expect(
+    page.getByRole("button", { name: "Enable ambient sound", exact: true }),
+  ).toBeVisible();
+});

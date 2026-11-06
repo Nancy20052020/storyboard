@@ -25,13 +25,13 @@ import {
 } from "@/lib/garden";
 const key = "starwoven-everbloom-v1";
 export default function Everbloom({
-  sound,
-  onEnableSound,
+  onStartMelody,
+  onStopMelody,
   onNote,
   onOpenMusic,
 }: {
-  sound: boolean;
-  onEnableSound: () => Promise<void>;
+  onStartMelody: () => Promise<void>;
+  onStopMelody: () => void;
   onNote: (frequency: number, kind: string) => void;
   onOpenMusic: () => void;
 }) {
@@ -105,13 +105,19 @@ export default function Everbloom({
     const timer = setInterval(tick, 60000 / garden.tempo);
     return () => clearInterval(timer);
   }, [playing, garden.tempo]);
+  useEffect(() => () => onStopMelody(), [onStopMelody]);
   async function toggle() {
     if (playing) {
       setPlaying(false);
+      onStopMelody();
       return;
     }
-    if (!sound) await onEnableSound();
-    setPlaying(true);
+    try {
+      await onStartMelody();
+      setPlaying(true);
+    } catch {
+      setMessage("The melody could not start. Please try again.");
+    }
   }
   function add(x: number, y: number) {
     if (garden.plants.length >= 200) {

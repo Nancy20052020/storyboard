@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 const tonesFor = (place: string) =>
   place === "forest"
     ? [146.83, 220, 293.66]
@@ -11,7 +11,8 @@ export default function useRealmAudio(place: string) {
     [error, setError] = useState("");
   const context = useRef<AudioContext | null>(null),
     master = useRef<GainNode | null>(null),
-    voices = useRef<OscillatorNode[]>([]);
+    voices = useRef<OscillatorNode[]>([]),
+    melody = useRef(false);
   useEffect(
     () => () => {
       void context.current?.close();
@@ -29,6 +30,49 @@ export default function useRealmAudio(place: string) {
         ),
       );
   }, [place]);
+  async function prepareAudio() {
+    if (!context.current) {
+      const ctx = new AudioContext();
+      context.current = ctx;
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      gain.connect(ctx.destination);
+      master.current = gain;
+      tonesFor(place).forEach((f, i) => {
+        const o = ctx.createOscillator(),
+          g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = f;
+        o.detune.value = i * 3;
+        g.gain.value = 0.017;
+        o.connect(g);
+        g.connect(gain);
+        o.start();
+        voices.current.push(o);
+      });
+    }
+    await context.current!.resume();
+  }
+  const stopMelody = useCallback(() => {
+    melody.current = false;
+  }, []);
+  async function startMelody() {
+    try {
+      await prepareAudio();
+      master.current!.gain.cancelScheduledValues(context.current!.currentTime);
+      master.current!.gain.setTargetAtTime(
+        0,
+        context.current!.currentTime,
+        0.08,
+      );
+      setSound(false);
+      melody.current = true;
+      setError("");
+    } catch {
+      setError("Your browser could not start audio. You can still explore.");
+      throw new Error("Audio could not start");
+    }
+  }
   async function toggle() {
     try {
       if (sound) {
@@ -40,30 +84,11 @@ export default function useRealmAudio(place: string) {
         setSound(false);
         return;
       }
-      if (!context.current) {
-        const ctx = new AudioContext();
-        context.current = ctx;
-        const gain = ctx.createGain();
-        gain.gain.value = 0;
-        gain.connect(ctx.destination);
-        master.current = gain;
-        tonesFor(place).forEach((f, i) => {
-          const o = ctx.createOscillator(),
-            g = ctx.createGain();
-          o.type = "sine";
-          o.frequency.value = f;
-          o.detune.value = i * 3;
-          g.gain.value = 0.017;
-          o.connect(g);
-          g.connect(gain);
-          o.start();
-          voices.current.push(o);
-        });
-      }
-      await context.current.resume();
+      await prepareAudio();
+      await context.current!.resume();
       master.current!.gain.setTargetAtTime(
         0.65,
-        context.current.currentTime,
+        context.current!.currentTime,
         0.5,
       );
       setSound(true);
@@ -93,7 +118,7 @@ export default function useRealmAudio(place: string) {
     };
   }
   function playNote(frequency: number, kind: string) {
-    if (!sound || !context.current || !master.current) return;
+    if ((!sound && !melody.current) || !context.current) return;
     const ctx = context.current;
     const oscillator = ctx.createOscillator(),
       harmonic = ctx.createOscillator(),
@@ -105,12 +130,12 @@ export default function useRealmAudio(place: string) {
     const overtone = ctx.createGain();
     overtone.gain.value = 0.12;
     envelope.gain.setValueAtTime(0.0001, ctx.currentTime);
-    envelope.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.025);
+    envelope.gain.exponentialRampToValueAtTime(0.1, ctx.currentTime + 0.025);
     envelope.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
     oscillator.connect(envelope);
     harmonic.connect(overtone);
     overtone.connect(envelope);
-    envelope.connect(master.current);
+    envelope.connect(ctx.destination);
     oscillator.start();
     harmonic.start();
     oscillator.stop(ctx.currentTime + 2);
@@ -122,5 +147,5 @@ export default function useRealmAudio(place: string) {
       envelope.disconnect();
     };
   }
-  return { sound, toggle, chime, playNote, error };
+  return { sound, toggle, chime, playNote, startMelody, stopMelody, error };
 }

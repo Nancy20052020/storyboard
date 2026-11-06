@@ -156,7 +156,7 @@ test("botanical garden still plants, tunes, plays and restores without export co
     .getByRole("button", { name: "Garden melody", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Mute ambient sound", exact: true }),
+    page.getByRole("button", { name: "Enable ambient sound", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Pause melody", exact: true }).click();
   await page.reload();

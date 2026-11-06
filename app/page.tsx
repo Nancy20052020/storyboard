@@ -108,7 +108,8 @@ export default function Home() {
     [showWelcome, setShowWelcome] = useState(false),
     [toast, setToast] = useState(""),
     [musicOpen, setMusicOpen] = useState(false);
-  const { sound, toggle, chime, playNote, error } = useRealmAudio(place);
+  const { sound, toggle, chime, playNote, startMelody, stopMelody, error } =
+    useRealmAudio(place);
   const heading = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const sync = () => {
@@ -260,8 +261,8 @@ export default function Home() {
           <Moonwell onChime={chime} />
         ) : place === "garden" ? (
           <Everbloom
-            sound={sound}
-            onEnableSound={toggle}
+            onStartMelody={startMelody}
+            onStopMelody={stopMelody}
             onNote={playNote}
             onOpenMusic={() => setMusicOpen(true)}
           />
