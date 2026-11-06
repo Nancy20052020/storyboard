@@ -15,11 +15,14 @@ import {
   ChevronRight,
   Heart,
   X,
+  Flower2,
 } from "lucide-react";
 import IslandArt, { type IslandKind } from "@/components/IslandArt";
+import PipCompanion from "@/components/PipCompanion";
 import useRealmAudio from "@/components/useRealmAudio";
 import "./realm.css";
-const SkyJournal = dynamic(() => import("@/components/SkyJournal"), {
+import "./enchanted.css";
+const Observatory = dynamic(() => import("@/components/Observatory"), {
   loading: () => <div className="realm-loading">Gathering your stars…</div>,
 });
 const ForestGrove = dynamic(() => import("@/components/ForestGrove"), {
@@ -28,6 +31,11 @@ const ForestGrove = dynamic(() => import("@/components/ForestGrove"), {
 const Moonwell = dynamic(() => import("@/components/Moonwell"), {
   loading: () => (
     <div className="realm-loading">Waiting for the water to settle…</div>
+  ),
+});
+const Everbloom = dynamic(() => import("@/components/Everbloom"), {
+  loading: () => (
+    <div className="realm-loading">Waking the little flowers…</div>
   ),
 });
 type Place = "world" | IslandKind;
@@ -56,6 +64,14 @@ const islands = [
     description: "Let a little thought float.",
     icon: Waves,
   },
+  {
+    id: "garden" as const,
+    index: "04",
+    name: "Everbloom",
+    tag: "FOR THE SONGS NOT YET SUNG",
+    description: "Plant a melody. Let it bloom.",
+    icon: Flower2,
+  },
 ];
 const messages = [
   "No quests. No finish line. Just a little room to be.",
@@ -71,13 +87,13 @@ export default function Home() {
     [showMote, setShowMote] = useState(true),
     [showWelcome, setShowWelcome] = useState(false),
     [toast, setToast] = useState("");
-  const { sound, toggle, chime, error } = useRealmAudio(place);
+  const { sound, toggle, chime, playNote, error } = useRealmAudio(place);
   const heading = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const sync = () => {
       const hash = location.hash.slice(1);
       setPlace(
-        ["sky", "forest", "lake"].includes(hash)
+        ["sky", "forest", "lake", "garden"].includes(hash)
           ? (hash as IslandKind)
           : "world",
       );
@@ -323,14 +339,17 @@ export default function Home() {
           </section>
         ) : place === "sky" ? (
           <section className="observatory-scene scene-enter">
-            <SkyJournal onChime={chime} />
+            <Observatory onChime={chime} />
           </section>
         ) : place === "forest" ? (
           <ForestGrove onChime={chime} />
-        ) : (
+        ) : place === "lake" ? (
           <Moonwell onChime={chime} />
+        ) : (
+          <Everbloom sound={sound} onEnableSound={toggle} onNote={playNote} />
         )}
       </div>
+      <PipCompanion place={place} onChime={chime} />
       <nav className="island-dock" aria-label="Island navigation">
         <button
           className={place === "world" ? "selected" : ""}
@@ -357,7 +376,7 @@ export default function Home() {
         ))}
       </nav>
       <span className="realm-edition">
-        A SOFTER CORNER OF THE INTERNET <Heart size={9} />
+        ENCHANTED EDITION · FOUR ISLANDS <Heart size={9} />
       </span>
       {(toast || error) && (
         <div className="realm-toast" role="status">
@@ -415,7 +434,9 @@ function WorldGuide({ onClose }: { onClose: () => void }) {
         <p>
           Write your thoughts into stars at the <b>Starlit Observatory</b>.
           Paint glowing trails with your hand in <b>Whisperwood</b>. Leave a
-          thought on the water, or pause for a breath at <b>Moonwell</b>.
+          thought on the water, or pause for a breath at <b>Moonwell</b>. Grow a
+          musical flower garden at <b>Everbloom</b>, or meet the zodiac
+          constellations in the Observatory’s illustrated atlas.
         </p>
         <p>
           Your original constellation journal is still here, with its saved

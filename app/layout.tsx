@@ -3,7 +3,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Starwoven — a little universe of your own",
   description:
-    "A private world of floating islands. Write among the stars, draw with hand gestures in an enchanted forest, and set your thoughts afloat on a moonlit lake.",
+    "Four mystical floating islands and a little moon bunny. Explore zodiac constellations, draw with hand gestures, float lantern thoughts, and grow a musical flower garden.",
 };
 export default function RootLayout({
   children,

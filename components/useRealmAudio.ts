@@ -92,5 +92,35 @@ export default function useRealmAudio(place: string) {
       g.disconnect();
     };
   }
-  return { sound, toggle, chime, error };
+  function playNote(frequency: number, kind: string) {
+    if (!sound || !context.current || !master.current) return;
+    const ctx = context.current;
+    const oscillator = ctx.createOscillator(),
+      harmonic = ctx.createOscillator(),
+      envelope = ctx.createGain();
+    oscillator.type = kind === "sunsprig" ? "triangle" : "sine";
+    oscillator.frequency.value = frequency;
+    harmonic.type = "sine";
+    harmonic.frequency.value = frequency * (kind === "moonbell" ? 3 : 2);
+    const overtone = ctx.createGain();
+    overtone.gain.value = 0.12;
+    envelope.gain.setValueAtTime(0.0001, ctx.currentTime);
+    envelope.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.025);
+    envelope.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.8);
+    oscillator.connect(envelope);
+    harmonic.connect(overtone);
+    overtone.connect(envelope);
+    envelope.connect(master.current);
+    oscillator.start();
+    harmonic.start();
+    oscillator.stop(ctx.currentTime + 2);
+    harmonic.stop(ctx.currentTime + 2);
+    oscillator.onended = () => {
+      oscillator.disconnect();
+      harmonic.disconnect();
+      overtone.disconnect();
+      envelope.disconnect();
+    };
+  }
+  return { sound, toggle, chime, playNote, error };
 }

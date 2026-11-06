@@ -1,0 +1,2245 @@
+/* A more enchanted world: luminous island artwork, deep space, and small creatures. */
+.realm {
+  background:
+    radial-gradient(ellipse at 72% 28%, #31285470, transparent 57%),
+    radial-gradient(ellipse at 20% 80%, #12424a40, transparent 60%), #080f1b;
+}
+.realm .aurora-a {
+  opacity: 0.35;
+  background: radial-gradient(ellipse, #65519c, transparent 65%);
+}
+.realm .aurora-b {
+  opacity: 0.3;
+}
+.realm-header {
+  background: #0a101c55;
+  backdrop-filter: blur(14px);
+}
+.world-map {
+  height: max(800px, calc(100svh - 86px));
+}
+.map-intro {
+  top: 12%;
+  left: 6%;
+  max-width: 380px;
+}
+.map-intro h1 {
+  font-size: clamp(36px, 3.5vw, 56px);
+  text-shadow: 0 0 40px #a994c712;
+}
+.map-intro > p {
+  font-size: 11px;
+  max-width: 285px;
+  line-height: 1.9;
+}
+.islands-scene {
+  inset: 0 0 95px;
+}
+.island .mystical-art {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 26px #9581ee17);
+  animation: float-island 9s ease-in-out infinite;
+}
+.island-sprite {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: url("/art/mystical-islands.webp");
+  background-size: 200% 200%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+.sprite-sky {
+  background-position: 0 0;
+}
+.sprite-forest {
+  background-position: 100% 0;
+}
+.sprite-lake {
+  background-position: 0 100%;
+}
+.sprite-garden {
+  background-position: 100% 100%;
+}
+.island-sky {
+  width: 320px;
+  height: 320px;
+  left: 35%;
+  top: 0;
+}
+.island-forest {
+  width: 345px;
+  height: 345px;
+  left: 67%;
+  top: 2%;
+}
+.island-lake {
+  width: 300px;
+  height: 300px;
+  left: 32%;
+  top: 48%;
+}
+.island-garden {
+  width: 310px;
+  height: 310px;
+  left: 67%;
+  top: 51%;
+}
+.island-sky .island-label,
+.island-forest .island-label,
+.island-lake .island-label,
+.island-garden .island-label {
+  top: 93%;
+  left: 13%;
+  right: auto;
+  align-items: flex-start;
+  text-align: left;
+  min-width: 205px;
+}
+.island-garden .island-label {
+  top: 93%;
+}
+.island-label .island-index {
+  position: absolute;
+  left: -24px;
+  top: 1px;
+  font-size: 6px;
+}
+.island-label .island-index i {
+  display: none;
+}
+.island-label strong {
+  font-size: 20px;
+  letter-spacing: -0.1px;
+  text-shadow: 0 0 20px #e2d1ff1a;
+}
+.island-tag {
+  font-size: 5px;
+  letter-spacing: 1.3px;
+  margin-bottom: 7px;
+}
+.island-description {
+  font-size: 9px;
+  color: #9b8eae;
+  margin-top: 7px;
+}
+.island-garden strong {
+  color: #e2c1db;
+}
+.island .island-aura {
+  inset: -20px;
+  background: radial-gradient(ellipse, #a17ce121, transparent 65%);
+}
+.island-forest .island-aura {
+  background: radial-gradient(ellipse, #60cdb91a, transparent 65%);
+}
+.island-lake .island-aura {
+  background: radial-gradient(ellipse, #7dd5fc15, transparent 65%);
+}
+.island-garden .island-aura {
+  background: radial-gradient(ellipse, #ef84cc1a, transparent 65%);
+}
+.island-art.art-forest {
+  animation-delay: -2s;
+}
+.island-art.art-lake {
+  animation-delay: -4s;
+}
+.island-art.art-garden {
+  animation-delay: -6s;
+}
+.coord-two {
+  display: none;
+}
+.map-moon {
+  display: none;
+}
+.island-paths {
+  opacity: 0.65;
+}
+.world-bottom {
+  bottom: 113px;
+}
+.world-footnote {
+  display: none;
+}
+.world-bottom .companion-wrap {
+  max-width: 340px;
+}
+.island-dock > button {
+  padding: 12px 15px;
+}
+.island-dock small {
+  display: none;
+}
+.island-dock > i {
+  margin: 0 3px;
+}
+.forest-scene {
+  background:
+    radial-gradient(ellipse at 12% 50%, #3e77762a, transparent 50%),
+    radial-gradient(ellipse at 89% 40%, #6b4b9a17, transparent 45%);
+}
+.forest-tree {
+  background: linear-gradient(90deg, #152b38, #3b5363);
+}
+.forest-mist {
+  background: radial-gradient(ellipse, #4963a722, transparent 65%);
+}
+.drawing-surface {
+  box-shadow:
+    0 0 45px #72d8b009,
+    0 30px 70px #0002;
+}
+.journal-app .sky {
+  background:
+    radial-gradient(ellipse at 62% 42%, #66467d33, transparent 40%),
+    radial-gradient(ellipse at 29% 72%, #357a9230, transparent 45%), #070e1e;
+}
+.journal-app .sky::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inset: -30%;
+  background: linear-gradient(
+    147deg,
+    transparent 39%,
+    #b3a8df0e 44%,
+    #d4c1ed10 47%,
+    #707baf15 50%,
+    transparent 58%
+  );
+  filter: blur(22px);
+}
+/* Pip, the moon bunny. */
+.pip-companion {
+  position: fixed;
+  right: 25px;
+  bottom: 104px;
+  z-index: 18;
+  width: 108px;
+  isolation: isolate;
+}
+.pip-pet {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  position: relative;
+  filter: drop-shadow(0 0 19px #cbc0f91a);
+}
+.pip-art {
+  display: block;
+  width: 104px;
+  height: 120px;
+  overflow: visible;
+  animation: pip-bob 4s ease-in-out infinite;
+}
+.pip-eyes {
+  transform: translate(var(--eye-x, 0px), var(--eye-y, 0px));
+}
+.pip-ear {
+  transform-origin: 65px 75px;
+}
+.pip-ear-left {
+  animation: pip-ear-wiggle 8s ease-in-out infinite;
+}
+.pip-ear-right {
+  animation: pip-ear-wiggle 8s 1s ease-in-out infinite reverse;
+}
+.pip-name {
+  font-size: 6px;
+  letter-spacing: 2.5px;
+  color: #afa1be;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+}
+.pip-name span {
+  font-size: 6px;
+  color: #d8c296;
+}
+.pip-sparkles {
+  position: absolute;
+  inset: -12px;
+  pointer-events: none;
+}
+.pip-sparkles > span {
+  position: absolute;
+  color: #d9c6ed;
+  left: 13%;
+  top: 20%;
+  font-size: 14px;
+  animation: twinkle 3s infinite alternate;
+}
+.pip-sparkles > span:nth-child(2) {
+  left: 89%;
+  top: 40%;
+  font-size: 8px;
+  animation-delay: 1s;
+}
+.pip-sparkles > span:last-child {
+  top: 74%;
+  left: 6%;
+  font-size: 20px;
+  color: #e3c28f;
+}
+.pip-bubble {
+  position: absolute;
+  right: 112px;
+  bottom: 29px;
+  width: 270px;
+  padding: 21px 21px 17px;
+  border: 1px solid #d7b5df32;
+  background: linear-gradient(130deg, #2b263eea, #202439f5);
+  backdrop-filter: blur(24px);
+  border-radius: 14px 14px 0 14px;
+  box-shadow: 0 10px 45px #0005;
+  animation: scene-arrive 0.25s ease-out;
+}
+.pip-bubble .card-kicker {
+  font-size: 5px;
+  color: #c4a7d5;
+  letter-spacing: 1.3px;
+  padding-right: 10px;
+}
+.pip-bubble p {
+  font:
+    italic 14px/1.8 Georgia,
+    serif;
+  color: #d3c5df;
+  margin: 14px 0;
+}
+.pip-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 0;
+  display: flex;
+  color: #a48fb9;
+}
+.pip-bubble > div {
+  display: flex;
+  gap: 8px;
+}
+.pip-bubble > div button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #c6aad125;
+  background: #c8a5d60a;
+  border-radius: 5px;
+  padding: 8px;
+  font-size: 8px;
+  color: #cab3d5;
+  flex: 1;
+  justify-content: center;
+}
+.pip-bubble > div button:hover {
+  background: #c8a5d61a;
+}
+.pip-footer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 6px;
+  color: #7d718f;
+  margin-top: 13px;
+}
+.pip-happy .pip-art {
+  animation: pip-happy 0.6s 3 ease-in-out;
+}
+.pip-snack .pip-art {
+  animation: pip-snack 0.35s 6 ease-in-out;
+}
+.pip-heart {
+  position: absolute;
+  top: 2px;
+  left: 48px;
+  font-size: 25px;
+  color: #e6a6c5;
+  animation: pip-heart 1.8s ease-out forwards;
+  pointer-events: none;
+}
+/* The observatory: a universe rather than a little card. */
+.observatory-view {
+  padding-bottom: 105px;
+  min-height: calc(100svh - 86px);
+}
+.observatory-switch {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  padding-top: 29px;
+}
+.observatory-switch > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #8d88a4;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: #080d1a60;
+}
+.observatory-switch > button[aria-pressed="true"] {
+  color: #dfcba5;
+  background: #c9b08d12;
+  border-color: #d9bf922e;
+}
+.observatory-switch > button:hover {
+  color: #e1cdb6;
+}
+.view-journal .journal-app {
+  padding-bottom: 10px;
+}
+.view-journal .journal-app > header {
+  height: 45px;
+}
+.view-journal .journal-app .intro {
+  padding-top: 0;
+}
+.view-journal .journal-app .sky {
+  height: calc(100svh - 465px);
+  min-height: 380px;
+}
+.cosmic-atlas {
+  position: relative;
+  isolation: isolate;
+  padding: 22px 4.5% 0;
+}
+.atlas-title {
+  text-align: center;
+  margin-bottom: 29px;
+}
+.atlas-title .realm-eyebrow {
+  justify-content: center;
+  font-size: 6px;
+  letter-spacing: 1.8px;
+}
+.atlas-title h1 {
+  font:
+    400 40px/1.2 "Playfair Display",
+    Georgia,
+    serif;
+  margin: 16px 0 10px;
+  letter-spacing: -1px;
+}
+.atlas-title h1 em {
+  color: #d5c1ea;
+  font-weight: 400;
+}
+.atlas-title p {
+  font-size: 10px;
+  color: #8e90ab;
+}
+.atlas-nebula {
+  position: absolute;
+  pointer-events: none;
+  inset: 0;
+  z-index: -1;
+  filter: blur(45px);
+  background: radial-gradient(ellipse at 70% 40%, #70529826, transparent 50%);
+}
+.atlas-nebula-b {
+  background: radial-gradient(ellipse at 10% 80%, #317a8b26, transparent 50%);
+}
+.atlas-layout {
+  display: grid;
+  grid-template-columns: 185px minmax(0, 1fr);
+  gap: 25px;
+  max-width: 1450px;
+  margin: 0 auto;
+}
+.constellation-library {
+  padding: 12px 0;
+}
+.constellation-library > .card-kicker {
+  font-size: 6px;
+  color: #9c8caf;
+  letter-spacing: 1.2px;
+}
+.constellation-library h2 {
+  font:
+    400 22px "Playfair Display",
+    Georgia,
+    serif;
+  margin: 15px 0 18px;
+  letter-spacing: -0.3px;
+  color: #d7cbe4;
+}
+.constellation-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+.constellation-list > button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border-radius: 5px;
+  color: #8f86a6;
+  font-size: 8px;
+  text-align: left;
+  border: 1px solid transparent;
+  min-width: 0;
+}
+.constellation-list > button > span:first-child {
+  font-size: 16px;
+  color: #ae9cba;
+  width: 18px;
+  flex-shrink: 0;
+  text-align: center;
+}
+.constellation-list > button > span:nth-child(2) {
+  min-width: 0;
+}
+.constellation-list small {
+  display: block;
+  font-size: 6px;
+  color: #937e9f;
+  margin-top: 3px;
+}
+.constellation-list > button > svg {
+  display: none;
+}
+.constellation-list > button.chosen {
+  background: #cdb6e015;
+  border-color: #d6b1e328;
+  color: #ebd7bb;
+}
+.constellation-list > button.chosen > span:first-child {
+  color: #e3c9a4;
+}
+.constellation-list > button:hover {
+  background: #cdb6e009;
+  color: #d4c7e2;
+}
+.atlas-library-note {
+  font-size: 7px;
+  line-height: 1.9;
+  color: #6f6584;
+  margin-top: 22px;
+  padding-left: 7px;
+}
+.atlas-map-wrap {
+  position: relative;
+  min-width: 0;
+}
+.atlas-map-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #7e7c99;
+  font-size: 6px;
+  letter-spacing: 1.4px;
+  margin: 0 1px 10px;
+  gap: 12px;
+}
+.atlas-map-top > span {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.atlas-map-top .live-dot {
+  width: 3px;
+  height: 3px;
+  background: #bdaccf;
+  box-shadow: 0 0 10px #d3bcf9;
+}
+.atlas-map-top > div {
+  display: flex;
+  gap: 9px;
+}
+.atlas-map-top button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 7px;
+  color: #7e7c99;
+  padding: 3px 6px;
+}
+.atlas-map-top button[aria-pressed="true"] {
+  color: #b1a7c6;
+}
+.universe-map {
+  display: block;
+  width: 100%;
+  height: clamp(400px, 55svh, 680px);
+  border: 1px solid #b4acd523;
+  border-radius: 12px;
+  background: #060c1a;
+  cursor: grab;
+  touch-action: none;
+  box-shadow: 0 15px 70px #0002;
+}
+.universe-map:active {
+  cursor: grabbing;
+}
+.atlas-constellation {
+  cursor: pointer;
+}
+.atlas-constellation:focus-visible {
+  outline: none;
+}
+.atlas-constellation:focus-visible > rect {
+  stroke: #e2c692;
+  stroke-width: 2;
+  stroke-dasharray: 3 5;
+}
+.atlas-constellation:hover polyline {
+  stroke: #e2c692;
+  stroke-opacity: 0.8;
+}
+.constellation-map-label {
+  font:
+    7px "DM Sans",
+    Arial,
+    sans-serif;
+  letter-spacing: 2.5px;
+  fill: #8b91b4;
+  pointer-events: none;
+}
+.is-selected .constellation-map-label {
+  fill: #dccaac;
+}
+.bright-star-label {
+  font:
+    italic 8px Georgia,
+    serif;
+  fill: #e1ad96;
+  pointer-events: none;
+}
+.atlas-zoom {
+  position: absolute;
+  top: 50px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #c2b1dd21;
+  background: #161b2bde;
+  border-radius: 8px;
+  padding: 5px;
+  gap: 2px;
+  backdrop-filter: blur(10px);
+}
+.atlas-zoom button {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  color: #b7abce;
+  border-radius: 4px;
+}
+.atlas-zoom button:hover {
+  background: #c2b1dd10;
+}
+.atlas-zoom button:disabled {
+  opacity: 0.3;
+}
+.atlas-zoom > span {
+  font-size: 6px;
+  color: #6c6784;
+}
+.atlas-zoom > i {
+  height: 1px;
+  background: #c2b1dd17;
+  width: 17px;
+  margin: 3px 0;
+}
+.atlas-map-hint {
+  position: absolute;
+  top: calc(clamp(400px, 55svh, 680px) - 4px);
+  left: 20px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 5px;
+  letter-spacing: 1px;
+  color: #646986;
+  pointer-events: none;
+}
+.constellation-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 23px 2px 0;
+}
+.constellation-detail-symbol {
+  font-size: 34px;
+  color: #cab797;
+  width: 50px;
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 13px;
+}
+.constellation-detail > div {
+  flex: 1;
+}
+.constellation-detail .card-kicker {
+  font-size: 6px;
+  letter-spacing: 1.2px;
+  color: #96829f;
+}
+.constellation-detail h3 {
+  font:
+    400 25px Georgia,
+    serif;
+  margin: 9px 0 10px;
+  color: #e1d5e8;
+}
+.constellation-detail p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #9c91af;
+  max-width: 640px;
+  margin: 0;
+}
+.constellation-facts {
+  display: flex;
+  gap: 34px;
+  margin-top: 16px;
+}
+.constellation-facts > span {
+  font-size: 5px;
+  letter-spacing: 1px;
+  color: #716582;
+}
+.constellation-facts b {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: #b8a6c7;
+  margin-top: 6px;
+}
+.atlas-disclaimer {
+  text-align: right;
+  max-width: 1450px;
+  margin: 24px auto 0;
+  font-size: 6px;
+  color: #5f5875;
+  line-height: 1.8;
+}
+.mobile-constellation-select {
+  display: none;
+}
+/* Everbloom: a tiny musical instrument disguised as a garden. */
+.realm-garden {
+  background:
+    radial-gradient(ellipse at 50% 30%, #4f2c534d, transparent 65%), #161525;
+}
+.everbloom-scene {
+  position: relative;
+  isolation: isolate;
+  min-height: calc(100svh - 86px);
+  padding-bottom: 145px;
+  overflow: hidden;
+}
+.everbloom-scene .place-heading h1 em {
+  color: #e0b5d0;
+}
+.everbloom-scene .place-heading p {
+  color: #aa8fa8;
+}
+.garden-aurora {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 85% 62%, #a45d8120, transparent 50%),
+    radial-gradient(ellipse at 15% 23%, #605c8a30, transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+}
+.everbloom-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 45px;
+  width: min(1200px, 89%);
+  margin: 38px auto 0;
+}
+.seed-cabinet {
+  padding: 13px 0;
+}
+.seed-cabinet > .card-kicker {
+  font-size: 6px;
+  color: #b699ae;
+  letter-spacing: 1.3px;
+}
+.seed-cabinet h2 {
+  font:
+    400 29px "Playfair Display",
+    Georgia,
+    serif;
+  color: #e3c9dd;
+  letter-spacing: -0.5px;
+  margin: 18px 0 13px;
+}
+.seed-cabinet > p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #9d859f;
+  margin: 0;
+}
+.seed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 26px;
+}
+.seed-list > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  border: 1px solid #dbb4d51a;
+  background: #c0a1c803;
+  padding: 14px 12px;
+  border-radius: 8px;
+}
+.seed-list > button.chosen {
+  border-color: #dbb4d548;
+  background: #c0a1c80c;
+}
+.seed-list > button > span:nth-child(2) {
+  flex: 1;
+}
+.seed-list b {
+  font-size: 11px;
+  font-weight: 400;
+  display: block;
+  color: #c8b1cb;
+}
+.seed-list small {
+  font-size: 8px;
+  color: #8e7591;
+  display: block;
+  margin-top: 6px;
+}
+.seed-list > button > svg {
+  color: #c6a1c5;
+}
+.seed-icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: radial-gradient(#dbb4d510, transparent 70%);
+}
+.garden-tuning {
+  margin-top: 26px;
+}
+.garden-tuning > label {
+  font-size: 5px;
+  color: #9e819f;
+  letter-spacing: 0.9px;
+  display: flex;
+  justify-content: space-between;
+}
+.garden-tuning > label span {
+  color: #b7a0bc;
+  font-size: 6px;
+  letter-spacing: 0;
+}
+.garden-tuning input {
+  width: 100%;
+  accent-color: #c6a0c3;
+  height: 3px;
+  margin: 18px 0 10px;
+  cursor: pointer;
+}
+.garden-tuning > div {
+  display: flex;
+  justify-content: space-between;
+  font:
+    italic 9px Georgia,
+    serif;
+  color: #89718d;
+}
+.garden-shuffle {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: #bc9ab9;
+  font-size: 8px;
+  padding: 0;
+  margin-top: 24px;
+}
+.seed-cabinet > .garden-quiet-note {
+  font-size: 7px;
+  margin-top: 17px;
+  color: #796280;
+}
+.garden-namebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 0 15px;
+  gap: 15px;
+}
+.garden-namebar input {
+  background: none;
+  border: 0;
+  color: #c6aecb;
+  font-size: 10px;
+  padding: 3px 0;
+  width: 230px;
+  max-width: 65%;
+}
+.garden-namebar > span {
+  color: #886f92;
+  font-size: 7px;
+}
+.enchanted-flowerbed {
+  position: relative;
+  height: 430px;
+  border: 1px solid #c4a1ce26;
+  border-radius: 13px 13px 0 0;
+  background:
+    radial-gradient(ellipse at 50% 40%, #3d314450, transparent 65%),
+    linear-gradient(#17232d, #282332);
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 20px 80px #0002;
+}
+.greenhouse-arch {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: -23%;
+  height: 130%;
+  border: 1px solid #caa4b315;
+  border-radius: 50% 50% 0 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 50px #b593c00c;
+}
+.greenhouse-arch:before,
+.greenhouse-arch:after {
+  content: "";
+  position: absolute;
+  inset: 0 17%;
+  border: 1px solid #caa4b310;
+  border-radius: 50% 50% 0 0;
+}
+.greenhouse-arch:after {
+  inset: 0 33%;
+}
+.flowerbed-soil {
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  top: 24%;
+  height: 65%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 30%,
+    #4c494f40,
+    #273f3440 55%,
+    #203c3230 65%,
+    transparent 69%
+  );
+  transform: rotate(-7deg);
+  border-bottom: 1px solid #9cba8a20;
+  box-shadow: 0 30px 45px #071e1e38;
+  pointer-events: none;
+}
+.flowerbed-path {
+  position: absolute;
+  top: 47%;
+  left: 16%;
+  width: 73%;
+  height: 40%;
+  border-bottom: 10px solid #c6aaa212;
+  border-radius: 50%;
+  transform: rotate(-10deg);
+  filter: blur(2px);
+  pointer-events: none;
+}
+.garden-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.garden-particles > i {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #e2b0e0;
+  box-shadow: 0 0 9px #e2b0e0;
+  animation: twinkle 4s infinite alternate;
+}
+.garden-patch {
+  position: absolute;
+  width: 65px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+.garden-patch.picked:after {
+  content: "";
+  position: absolute;
+  width: 45px;
+  height: 15px;
+  border: 1px solid var(--bloom-color);
+  opacity: 0.3;
+  border-radius: 50%;
+  bottom: 0;
+  left: 10px;
+  pointer-events: none;
+}
+.empty-patch-ring {
+  width: 32px;
+  height: 12px;
+  border: 1px dashed #ac8ab33a;
+  transform: translateY(31px);
+  border-radius: 50%;
+  font-size: 15px;
+  line-height: 7px;
+  color: #a183a778;
+  transition: 0.3s;
+}
+.empty-patch-label {
+  font-size: 4px;
+  letter-spacing: 0.6px;
+  color: #846b90;
+  white-space: nowrap;
+  position: absolute;
+  bottom: -10px;
+  opacity: 0;
+}
+.empty:hover .empty-patch-label,
+.empty:focus-visible .empty-patch-label {
+  opacity: 1;
+}
+.empty:hover .empty-patch-ring {
+  border-color: #ccabd17a;
+  color: #d7b8db;
+}
+.enchanted-flower {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  animation: flower-sway 5s ease-in-out infinite;
+}
+.garden-patch:nth-child(2n) .enchanted-flower {
+  animation-delay: -2s;
+}
+.flower-stem {
+  position: absolute;
+  left: 31px;
+  top: 35px;
+  bottom: 4px;
+  width: 2px;
+  background: linear-gradient(#bac7a1, #5e8c6c);
+  border-radius: 100%;
+  transform: rotate(5deg);
+}
+.flower-leaf {
+  position: absolute;
+  left: 33px;
+  top: 58px;
+  width: 20px;
+  height: 9px;
+  border-radius: 0 90% 0 90%;
+  transform: rotate(-23deg);
+  background: #829f79;
+  box-shadow: -15px -11px 0 -2px #71966f;
+}
+.flower-petals {
+  position: absolute;
+  left: 32px;
+  top: 28px;
+  filter: drop-shadow(
+    0 0 9px color-mix(in srgb, var(--bloom-color) 30%, transparent)
+  );
+}
+.flower-petals > i {
+  position: absolute;
+  left: -7px;
+  top: -22px;
+  width: 14px;
+  height: 26px;
+  background: linear-gradient(
+    var(--bloom-color),
+    color-mix(in srgb, var(--bloom-color) 50%, #7c557f)
+  );
+  border-radius: 75% 75% 35% 35%;
+  transform-origin: 50% 85%;
+  opacity: 0.88;
+}
+.flower-petals > b {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  height: 10px;
+  width: 10px;
+  background: #e8d3b2;
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--bloom-color);
+}
+.flower-moonbell .flower-petals > i {
+  border-radius: 90% 90% 35% 35%;
+  width: 12px;
+  height: 19px;
+  top: -16px;
+  left: -6px;
+  transform-origin: 50% 80%;
+}
+.flower-starlily .flower-petals > i {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  border-radius: 0;
+  height: 31px;
+  top: -27px;
+  width: 17px;
+  left: -8px;
+  transform-origin: 50% 90%;
+}
+.flower-sunsprig .flower-petals > i {
+  width: 11px;
+  height: 21px;
+  left: -5px;
+  top: -18px;
+}
+.flower-sunsprig .flower-petals > b {
+  width: 13px;
+  height: 13px;
+  left: -6px;
+  top: -6px;
+  background: #c6a173;
+}
+.bloom-aura {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--bloom-color) 12%, transparent),
+    transparent 65%
+  );
+  pointer-events: none;
+}
+.bloom-note {
+  position: absolute;
+  bottom: -17px;
+  font-size: 7px;
+  letter-spacing: 1px;
+  color: var(--bloom-color);
+  opacity: 0.5;
+}
+.garden-patch.sounding .bloom-aura {
+  background: radial-gradient(
+    ellipse,
+    color-mix(in srgb, var(--bloom-color) 45%, transparent),
+    transparent 65%
+  );
+}
+.garden-patch.sounding .flower-petals {
+  filter: drop-shadow(0 0 16px var(--bloom-color));
+  scale: 1.12;
+}
+.garden-patch.sounding .bloom-note {
+  opacity: 1;
+}
+.garden-bed-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font:
+    italic 13px Georgia,
+    serif;
+  color: #a78da9;
+  pointer-events: none;
+}
+.garden-bed-caption span {
+  margin-right: 8px;
+  color: #c4a6cd;
+}
+.garden-player {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 17px 20px;
+  border: 1px solid #c4a1ce26;
+  border-top: 0;
+  background: #2e2337a8;
+  border-radius: 0 0 10px 10px;
+}
+.garden-play {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #e0c5dc;
+  font-size: 9px;
+  white-space: nowrap;
+  padding: 8px 11px;
+  border: 1px solid #d6afd434;
+  border-radius: 6px;
+  background: #d6afd40a;
+}
+.garden-play:hover,
+.garden-play.is-playing {
+  background: #d6afd41a;
+}
+.garden-play:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.garden-sequencer {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: auto;
+}
+.garden-sequencer > i {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background: #b18cb51a;
+  transition: 0.3s;
+}
+.garden-sequencer > i.has-note {
+  background: var(--bloom-color);
+  opacity: 0.3;
+}
+.garden-sequencer > i.now {
+  opacity: 1;
+  box-shadow: 0 0 12px var(--bloom-color, #c8a0cf);
+  scale: 1.4;
+}
+.garden-export {
+  display: flex;
+  color: #bb97bb;
+  padding: 4px;
+}
+.bloom-editor {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 17px 5px 0;
+  font-size: 8px;
+  color: #ac8db0;
+  flex-wrap: wrap;
+}
+.bloom-editor > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.bloom-editor > label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 7px;
+  margin-left: auto;
+}
+.bloom-editor select {
+  background: #30263a;
+  border: 1px solid #b18cb530;
+  color: #d8bdd7;
+  border-radius: 4px;
+  font-size: 9px;
+  padding: 5px 8px;
+}
+.bloom-editor > button {
+  display: flex;
+  color: #ac8db0;
+  padding: 0;
+}
+.garden-under-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 3px;
+  font-size: 7px;
+  color: #8d7197;
+}
+@keyframes pip-bob {
+  50% {
+    translate: 0 -5px;
+  }
+}
+@keyframes pip-ear-wiggle {
+  0%,
+  85%,
+  100% {
+    rotate: 0;
+  }
+  90% {
+    rotate: -5deg;
+  }
+  95% {
+    rotate: 3deg;
+  }
+}
+@keyframes pip-happy {
+  50% {
+    translate: 0 -10px;
+    rotate: 4deg;
+  }
+}
+@keyframes pip-snack {
+  50% {
+    rotate: -2deg;
+    scale: 1.03;
+  }
+}
+@keyframes pip-heart {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 12px -60px;
+  }
+}
+@keyframes flower-sway {
+  50% {
+    rotate: 4deg;
+  }
+}
+@media (min-width: 1700px) {
+  .island-sky {
+    width: 370px;
+    height: 370px;
+  }
+  .island-forest {
+    width: 400px;
+    height: 400px;
+  }
+  .island-lake {
+    width: 350px;
+    height: 350px;
+  }
+  .island-garden {
+    width: 360px;
+    height: 360px;
+  }
+  .island-label strong {
+    font-size: 23px;
+  }
+  .islands-scene {
+    bottom: 100px;
+  }
+}
+@media (max-width: 1200px) {
+  .world-map {
+    height: max(830px, calc(100svh - 86px));
+  }
+  .map-intro {
+    left: 5%;
+    max-width: 310px;
+  }
+  .map-intro h1 {
+    font-size: 38px;
+  }
+  .map-intro > p {
+    font-size: 10px;
+    max-width: 245px;
+  }
+  .island-sky {
+    left: 34%;
+    width: 270px;
+    height: 270px;
+    top: 1%;
+  }
+  .island-forest {
+    left: 67%;
+    width: 285px;
+    height: 285px;
+    top: 10%;
+  }
+  .island-lake {
+    left: 31%;
+    width: 265px;
+    height: 265px;
+    top: 51%;
+  }
+  .island-garden {
+    left: 66%;
+    width: 270px;
+    height: 270px;
+    top: 58%;
+  }
+  .island-label strong {
+    font-size: 18px;
+  }
+  .island-sky .island-label,
+  .island-forest .island-label,
+  .island-lake .island-label,
+  .island-garden .island-label {
+    left: 10%;
+    min-width: 160px;
+  }
+  .island-tag {
+    font-size: 4px;
+    letter-spacing: 0.9px;
+  }
+  .island-description {
+    font-size: 8px;
+  }
+  .pip-companion {
+    right: 16px;
+    bottom: 106px;
+    width: 91px;
+  }
+  .pip-art {
+    width: 91px;
+    height: 105px;
+  }
+  .pip-bubble {
+    right: 96px;
+    bottom: 20px;
+  }
+  .everbloom-layout {
+    grid-template-columns: 205px minmax(0, 1fr);
+    gap: 30px;
+    width: 90%;
+  }
+  .garden-patch {
+    scale: 0.9;
+  }
+  .enchanted-flowerbed {
+    height: 405px;
+  }
+  .atlas-layout {
+    grid-template-columns: 175px minmax(0, 1fr);
+    gap: 20px;
+  }
+  .constellation-facts {
+    gap: 23px;
+  }
+  .island-dock > button {
+    padding: 12px 12px;
+    font-size: 9px;
+    gap: 8px;
+  }
+}
+@media (max-width: 950px) {
+  .map-intro h1 {
+    font-size: 35px;
+  }
+  .map-intro {
+    top: 9%;
+    max-width: 285px;
+  }
+  .island-sky {
+    left: 43%;
+    width: 265px;
+    height: 265px;
+    top: 2%;
+  }
+  .island-forest {
+    left: 62%;
+    width: 275px;
+    height: 275px;
+    top: 40%;
+  }
+  .island-lake {
+    left: 4%;
+    width: 250px;
+    height: 250px;
+    top: 42%;
+  }
+  .island-garden {
+    left: 32%;
+    width: 250px;
+    height: 250px;
+    top: 71%;
+  }
+  .world-map {
+    height: 1090px;
+  }
+  .islands-scene {
+    bottom: 150px;
+  }
+  .world-bottom {
+    bottom: 113px;
+  }
+  .island-label strong {
+    font-size: 17px;
+  }
+  .island-dock > button {
+    font-size: 8px;
+    padding: 12px 10px;
+    gap: 7px;
+  }
+  .pip-companion {
+    bottom: 108px;
+    right: 20px;
+    width: 85px;
+  }
+  .pip-art {
+    width: 85px;
+    height: 98px;
+  }
+  .atlas-layout {
+    grid-template-columns: 155px minmax(0, 1fr);
+    gap: 15px;
+  }
+  .constellation-list > button {
+    font-size: 7px;
+    padding: 9px 4px;
+    gap: 4px;
+  }
+  .constellation-list > button > span:first-child {
+    font-size: 14px;
+    width: 16px;
+  }
+  .constellation-detail {
+    gap: 13px;
+  }
+  .constellation-detail-symbol {
+    width: 32px;
+    font-size: 27px;
+  }
+  .constellation-detail p {
+    font-size: 9px;
+  }
+  .everbloom-layout {
+    grid-template-columns: 185px minmax(0, 1fr);
+    gap: 22px;
+  }
+  .seed-cabinet h2 {
+    font-size: 25px;
+  }
+  .seed-cabinet > p {
+    font-size: 9px;
+  }
+  .seed-list > button {
+    gap: 7px;
+    padding: 12px 8px;
+  }
+  .seed-list b {
+    font-size: 10px;
+  }
+  .seed-list small {
+    font-size: 6px;
+  }
+  .seed-icon {
+    width: 27px;
+  }
+  .garden-player {
+    gap: 10px;
+    padding: 15px 12px;
+  }
+  .garden-play {
+    font-size: 8px;
+    padding: 8px;
+  }
+  .garden-sequencer {
+    gap: 5px;
+  }
+  .garden-sequencer > i {
+    height: 4px;
+    width: 4px;
+  }
+  .garden-namebar input {
+    font-size: 9px;
+  }
+  .garden-namebar > span {
+    font-size: 6px;
+  }
+  .garden-patch {
+    scale: 0.82;
+  }
+  .bloom-editor {
+    gap: 10px;
+  }
+  .enchanted-flowerbed {
+    height: 390px;
+  }
+}
+@media (max-width: 650px) {
+  .world-map {
+    height: 1570px;
+  }
+  .map-intro {
+    top: 43px;
+    left: 8%;
+    right: 5%;
+    max-width: none;
+  }
+  .map-intro h1 {
+    font-size: 38px;
+    max-width: 340px;
+    margin-bottom: 18px;
+  }
+  .map-intro > p {
+    max-width: 290px;
+    font-size: 10px;
+  }
+  .islands-scene {
+    inset: 305px 0 125px;
+  }
+  .island-sky {
+    left: 6%;
+    top: 0;
+    width: 245px;
+    height: 245px;
+  }
+  .island-forest {
+    left: 29%;
+    top: 25%;
+    width: 255px;
+    height: 255px;
+  }
+  .island-lake {
+    left: 4%;
+    top: 51%;
+    width: 245px;
+    height: 245px;
+  }
+  .island-garden {
+    left: 28%;
+    top: 77%;
+    width: 245px;
+    height: 245px;
+  }
+  .island-sky .island-label,
+  .island-forest .island-label,
+  .island-lake .island-label,
+  .island-garden .island-label {
+    left: 14%;
+    top: 93%;
+    align-items: flex-start;
+    text-align: left;
+    min-width: 195px;
+  }
+  .island-label strong {
+    font-size: 19px;
+    white-space: nowrap !important;
+    max-width: none !important;
+    line-height: 1.3;
+  }
+  .island-sky .island-label strong {
+    font-size: 18px;
+  }
+  .island-label .island-index {
+    font-size: 5px;
+    top: 0;
+    left: -20px;
+  }
+  .island-tag {
+    font-size: 4px;
+    letter-spacing: 1.1px;
+    max-width: none;
+    line-height: 1.4;
+  }
+  .island-description {
+    max-width: none;
+    font-size: 8px;
+    white-space: nowrap;
+    margin-top: 5px;
+  }
+  .world-bottom {
+    bottom: 87px;
+    left: 5%;
+    right: 25%;
+  }
+  .world-bottom .companion-wrap {
+    gap: 8px;
+  }
+  .world-bottom .companion-message {
+    max-width: 240px;
+  }
+  .world-bottom .companion-message p {
+    font-size: 10px;
+  }
+  .world-bottom .mote-character {
+    scale: 0.7;
+    width: 40px;
+  }
+  .world-bottom .companion-message > span {
+    font-size: 4px;
+  }
+  .island-paths {
+    display: none;
+  }
+  .orbit {
+    width: 94%;
+    left: 3%;
+    height: 90%;
+    top: 3%;
+    transform: rotate(-12deg);
+  }
+  .island-dock {
+    gap: 1px;
+    padding: 5px;
+    max-width: 460px;
+  }
+  .island-dock > button {
+    padding: 10px 3px;
+    gap: 7px;
+    font-size: 5px;
+  }
+  .island-dock > button svg {
+    height: 16px;
+    width: 16px;
+  }
+  .island-dock > i {
+    margin: 0;
+    height: 25px;
+  }
+  .pip-companion {
+    right: 10px;
+    bottom: 99px;
+    width: 69px;
+  }
+  .pip-art {
+    width: 69px;
+    height: 80px;
+  }
+  .pip-name {
+    font-size: 5px;
+    letter-spacing: 2px;
+  }
+  .pip-sparkles {
+    inset: -6px;
+  }
+  .pip-sparkles > span {
+    font-size: 9px;
+  }
+  .pip-bubble {
+    right: 72px;
+    bottom: 15px;
+    width: min(260px, calc(100vw - 100px));
+    padding: 19px 17px 15px;
+  }
+  .pip-bubble p {
+    font-size: 12px;
+  }
+  .pip-bubble .card-kicker {
+    font-size: 4px;
+    letter-spacing: 0.9px;
+  }
+  .pip-bubble > div button {
+    font-size: 7px;
+    padding: 8px 5px;
+  }
+  .pip-footer {
+    font-size: 5px;
+  }
+  .observatory-view {
+    padding-bottom: 108px;
+  }
+  .observatory-switch {
+    padding: 60px 10px 0;
+    gap: 4px;
+  }
+  .observatory-switch > button {
+    font-size: 8px;
+    padding: 10px 12px;
+    gap: 7px;
+  }
+  .observatory-switch > button svg {
+    width: 13px;
+    height: 13px;
+  }
+  .cosmic-atlas {
+    padding: 25px 5% 0;
+  }
+  .atlas-title {
+    margin-bottom: 24px;
+  }
+  .atlas-title .realm-eyebrow {
+    font-size: 5px;
+    letter-spacing: 1.1px;
+    line-height: 1.8;
+  }
+  .atlas-title h1 {
+    font-size: 34px;
+    margin: 15px 0 12px;
+  }
+  .atlas-title p {
+    font-size: 9px;
+    line-height: 1.8;
+    padding: 0 14px;
+  }
+  .atlas-layout {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  .constellation-library {
+    padding: 0;
+  }
+  .constellation-library > .card-kicker,
+  .constellation-library h2,
+  .constellation-list,
+  .atlas-library-note {
+    display: none;
+  }
+  .mobile-constellation-select {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #a497b8;
+    font-size: 8px;
+  }
+  .mobile-constellation-select select {
+    max-width: 63%;
+    font-size: 10px;
+    background: #262238;
+    border: 1px solid #d4b9e329;
+    border-radius: 6px;
+    color: #ddc8e5;
+    padding: 11px 12px;
+    min-width: 180px;
+  }
+  .atlas-map-top {
+    font-size: 5px;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .atlas-map-top > div {
+    gap: 6px;
+  }
+  .atlas-map-top button {
+    font-size: 6px;
+    padding: 3px;
+  }
+  .universe-map {
+    height: 410px;
+  }
+  .atlas-map-hint {
+    top: 407px;
+    font-size: 4px;
+    letter-spacing: 0.4px;
+    left: 12px;
+    gap: 4px;
+  }
+  .atlas-map-hint svg {
+    width: 9px;
+  }
+  .atlas-zoom {
+    top: 45px;
+    right: 10px;
+    padding: 4px;
+  }
+  .atlas-zoom button {
+    padding: 7px;
+  }
+  .atlas-zoom button svg {
+    width: 13px;
+    height: 13px;
+  }
+  .constellation-detail {
+    gap: 11px;
+    padding-top: 24px;
+  }
+  .constellation-detail-symbol {
+    width: 25px;
+    font-size: 24px;
+  }
+  .constellation-detail .card-kicker {
+    font-size: 5px;
+    letter-spacing: 0.8px;
+  }
+  .constellation-detail h3 {
+    font-size: 24px;
+  }
+  .constellation-detail p {
+    font-size: 10px;
+    line-height: 1.9;
+    padding-right: 9px;
+  }
+  .constellation-facts {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .constellation-facts > span {
+    font-size: 4px;
+    letter-spacing: 0.8px;
+  }
+  .constellation-facts b {
+    font-size: 7px;
+    line-height: 1.7;
+    margin-top: 5px;
+  }
+  .atlas-disclaimer {
+    text-align: left;
+    font-size: 6px;
+    line-height: 1.9;
+    margin-top: 23px;
+    padding-right: 50px;
+  }
+  .view-journal .journal-app > header {
+    height: 38px;
+  }
+  .view-journal .journal-app .intro {
+    padding-top: 0;
+    padding-bottom: 24px;
+  }
+  .view-journal .journal-app .intro h1 {
+    font-size: 29px;
+  }
+  .view-journal .journal-app .sky {
+    min-height: 390px;
+    height: calc(100svh - 450px);
+  }
+  .view-journal .journal-app .editor {
+    z-index: 8;
+  }
+  .view-journal .journal-app .below-sky {
+    padding-right: 45px;
+    align-items: flex-start;
+  }
+  .view-journal .journal-app .below-sky p {
+    max-width: 170px;
+  }
+  .view-journal .journal-app .below-sky button {
+    font-size: 7px;
+  }
+  .everbloom-scene {
+    padding-bottom: 150px;
+  }
+  .everbloom-scene .place-heading {
+    padding-top: 69px;
+  }
+  .everbloom-scene .place-heading h1 {
+    font-size: 32px;
+  }
+  .everbloom-scene .place-heading p {
+    font-size: 9px;
+    max-width: 300px;
+    margin: auto;
+  }
+  .everbloom-layout {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    width: 90%;
+    margin-top: 30px;
+  }
+  .seed-cabinet {
+    padding: 0;
+  }
+  .seed-cabinet > .card-kicker {
+    font-size: 5px;
+  }
+  .seed-cabinet h2 {
+    font-size: 25px;
+    margin: 15px 0 11px;
+  }
+  .seed-cabinet > p {
+    font-size: 9px;
+    max-width: 300px;
+    line-height: 1.9;
+  }
+  .seed-list {
+    flex-direction: row;
+    gap: 7px;
+    margin-top: 20px;
+  }
+  .seed-list > button {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 9px;
+    padding: 14px 7px;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+  }
+  .seed-list > button > svg {
+    position: absolute;
+    top: 8px;
+    right: 7px;
+    width: 10px;
+    height: 10px;
+  }
+  .seed-list b {
+    font-size: 9px;
+  }
+  .seed-list small {
+    font-size: 5px;
+    line-height: 1.7;
+    max-width: 80px;
+    margin-top: 5px;
+  }
+  .seed-icon {
+    height: 26px;
+    width: 30px;
+  }
+  .garden-tuning {
+    margin-top: 24px;
+  }
+  .garden-tuning > label {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .garden-tuning > div {
+    font-size: 8px;
+  }
+  .garden-shuffle {
+    margin-top: 19px;
+    font-size: 8px;
+  }
+  .seed-cabinet > .garden-quiet-note {
+    font-size: 6px;
+    margin-top: 12px;
+  }
+  .garden-namebar input {
+    font-size: 9px;
+    max-width: 60%;
+  }
+  .garden-namebar > span {
+    font-size: 6px;
+    max-width: 38%;
+    text-align: right;
+    line-height: 1.7;
+  }
+  .enchanted-flowerbed {
+    height: 340px;
+  }
+  .garden-patch {
+    scale: 0.72;
+    width: 65px;
+  }
+  .flowerbed-soil {
+    top: 20%;
+    height: 66%;
+  }
+  .garden-bed-caption {
+    font-size: 10px;
+    bottom: 20px;
+  }
+  .garden-player {
+    padding: 14px 12px;
+    gap: 10px;
+  }
+  .garden-play {
+    font-size: 8px;
+    gap: 6px;
+    padding: 8px;
+  }
+  .garden-play svg {
+    height: 13px;
+    width: 13px;
+  }
+  .garden-sequencer {
+    gap: 4px;
+  }
+  .garden-sequencer > i {
+    width: 3px;
+    height: 3px;
+  }
+  .garden-export {
+    padding: 3px;
+  }
+  .garden-export svg {
+    width: 13px;
+    height: 13px;
+  }
+  .bloom-editor {
+    gap: 10px;
+    font-size: 7px;
+    padding-top: 19px;
+  }
+  .bloom-editor > span {
+    gap: 5px;
+  }
+  .bloom-editor label {
+    font-size: 6px;
+    gap: 7px;
+  }
+  .bloom-editor select {
+    font-size: 8px;
+    padding: 5px 6px;
+  }
+  .garden-under-note {
+    font-size: 6px;
+    padding-right: 55px;
+    line-height: 1.8;
+  }
+  .realm-garden .pip-companion {
+    bottom: 95px;
+  }
+}
+@media (max-width: 380px) {
+  .map-intro h1 {
+    font-size: 35px;
+  }
+  .island-sky {
+    left: 3%;
+    width: 230px;
+    height: 230px;
+  }
+  .island-forest {
+    left: 23%;
+    width: 245px;
+    height: 245px;
+  }
+  .island-lake {
+    left: 2%;
+    width: 230px;
+    height: 230px;
+  }
+  .island-garden {
+    left: 24%;
+    width: 230px;
+    height: 230px;
+  }
+  .island-label strong {
+    font-size: 17px;
+  }
+  .island-sky .island-label strong {
+    font-size: 16px;
+  }
+  .island-label .island-index {
+    left: -15px;
+  }
+  .pip-companion {
+    width: 62px;
+    right: 8px;
+  }
+  .pip-art {
+    width: 62px;
+    height: 72px;
+  }
+  .pip-bubble {
+    right: 65px;
+    width: 235px;
+  }
+  .observatory-switch > button {
+    font-size: 7px;
+    padding: 10px;
+  }
+  .garden-player {
+    gap: 7px;
+    padding: 12px 9px;
+  }
+  .garden-play {
+    font-size: 7px;
+  }
+  .garden-sequencer {
+    gap: 4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pip-art,
+  .pip-ear,
+  .pip-heart,
+  .enchanted-flower,
+  .garden-particles > i,
+  .island .mystical-art {
+    animation: none !important;
+  }
+  .pip-heart {
+    opacity: 1;
+  }
+  .pip-eyes {
+    transform: none;
+  }
+  .garden-sequencer > i,
+  .flower-petals {
+    transition: none;
+  }
+}
+/* Keep the companion clear of creative tools and export actions. */
+.realm:not(.realm-world) .pip-companion {
+  top: 111px;
+  bottom: auto;
+  right: 22px;
+  width: 78px;
+}
+.realm:not(.realm-world) .pip-art {
+  width: 78px;
+  height: 90px;
+}
+.realm:not(.realm-world) .pip-bubble {
+  top: 12px;
+  bottom: auto;
+  right: 85px;
+}
+.constellation-list > button > span:first-child,
+.constellation-detail-symbol {
+  font-family: Georgia, "Times New Roman", serif;
+  font-variant-emoji: text;
+}
+.constellation-map-label {
+  font-size: 11px;
+  letter-spacing: 2.2px;
+}
+.bright-star-label {
+  font-size: 11px;
+}
+@media (max-width: 650px) {
+  .realm:not(.realm-world) .pip-companion {
+    top: 83px;
+    right: 11px;
+    bottom: auto;
+    width: 48px;
+  }
+  .realm:not(.realm-world) .pip-art {
+    width: 48px;
+    height: 56px;
+  }
+  .realm:not(.realm-world) .pip-name {
+    font-size: 4px;
+    letter-spacing: 1px;
+  }
+  .realm:not(.realm-world) .pip-bubble {
+    top: 0;
+    bottom: auto;
+    right: 57px;
+    width: min(260px, calc(100vw - 80px));
+  }
+  .realm:not(.realm-world) .pip-sparkles {
+    opacity: 0.5;
+  }
+  .realm:not(.realm-world) .pip-sparkles > span:first-child {
+    font-size: 7px;
+  }
+  .realm:not(.realm-world) .pip-sparkles > span:last-child {
+    font-size: 10px;
+  }
+}
+.realm-world .realm-atmosphere::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/art/celestial-nebula.webp") center/cover;
+  opacity: 0.16;
+  pointer-events: none;
+}
+.journal-app .sky {
+  background:
+    linear-gradient(#070e1e55, #070e1e80),
+    url("/art/celestial-nebula.webp") center/cover;
+}
+.zodiac-glyph {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: 36px;
+  max-width: 36px;
+}
+.constellation-list .zodiac-glyph {
+  width: 17px;
+  height: 17px;
+  stroke-width: 1.7;
+}
+.constellation-detail-symbol .zodiac-glyph {
+  width: 32px;
+  height: 32px;
+  margin: auto;
+}

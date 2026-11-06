@@ -29,6 +29,9 @@ test("islands are keyboard accessible and the original sky survives navigation",
     .getByRole("button", { name: "Visit Starlit Observatory", exact: true })
     .focus();
   await page.keyboard.press("Enter");
+  await page
+    .getByRole("button", { name: "My stars & writing", exact: true })
+    .click();
   await expect(
     page.getByRole("textbox", { name: "Name your sky" }),
   ).toHaveValue("A sky from before the islands");
@@ -44,6 +47,9 @@ test("islands are keyboard accessible and the original sky survives navigation",
   await page.getByRole("button", { name: "Moonwell", exact: true }).click();
   await page
     .getByRole("button", { name: "Starlit Observatory", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "My stars & writing", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Open star: An old memory", exact: true })
@@ -95,6 +101,10 @@ test("draws, exports a PNG, flushes on leaving, and undoes a saved stroke", asyn
 test("lantern writing, breathing, export and removal work", async ({
   page,
 }) => {
+  // Exercise the far edge of the placement range: lanterns must stay clear of the composer.
+  await page.addInitScript(() => {
+    Math.random = () => 0.999;
+  });
   await page.goto("/#lake");
   await page
     .getByRole("textbox", {

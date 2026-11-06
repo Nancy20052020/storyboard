@@ -123,8 +123,8 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
       {
         id: crypto.randomUUID(),
         text: value,
-        x: 12 + Math.random() * 76,
-        y: 40 + Math.random() * 29,
+        x: 30 + Math.random() * 58,
+        y: 45 + Math.random() * 9,
         date: new Date().toISOString(),
       },
     ]);
@@ -181,8 +181,8 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
           key={l.id}
           className="floating-lantern"
           style={{
-            left: `${l.x}%`,
-            top: `${l.y}%`,
+            left: `${Math.max(28, l.x)}%`,
+            top: `${Math.min(54, Math.max(45, l.y))}%`,
             animationDelay: `${(i % 5) * -1.3}s`,
           }}
           aria-label={`Read lantern: ${l.text.slice(0, 45)}`}
