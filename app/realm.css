@@ -1,0 +1,2707 @@
+/* The in-between: an illustrated, full-window world. */
+:root {
+  --realm-gold: #d6c2a0;
+  --realm-soft: #9c9aa9;
+  --realm-line: #d8d3ed12;
+}
+body {
+  background: #0c121b;
+}
+.realm {
+  min-height: 100svh;
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 65% 38%, #23273c80, transparent 60%), #0c121b;
+  overflow: hidden;
+  color: #e9e7ed;
+}
+.realm-atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora {
+  position: absolute;
+  width: 100%;
+  height: 70%;
+  filter: blur(70px);
+  opacity: 0.18;
+  transform: rotate(-25deg);
+  border-radius: 50%;
+}
+.aurora-a {
+  background: radial-gradient(ellipse, #8272a3, transparent 65%);
+  top: -5%;
+  left: 20%;
+}
+.aurora-b {
+  background: radial-gradient(ellipse, #3f6d6b, transparent 65%);
+  top: 35%;
+  left: -30%;
+}
+.realm-dust {
+  position: absolute;
+  border-radius: 50%;
+  background: #dfdbf0;
+  box-shadow: 0 0 7px #b1adc6;
+  animation: twinkle 5s ease-in-out infinite alternate;
+}
+.shooting-star {
+  position: absolute;
+  top: 26%;
+  left: 64%;
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4cedf);
+  transform: rotate(-36deg);
+  opacity: 0;
+  animation: shooting 19s 6s infinite;
+}
+.realm-header {
+  height: 86px;
+  padding: 0 3.7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid #ffffff06;
+  background: #0c121b25;
+  gap: 24px;
+}
+.realm-brand {
+  font:
+    26px Georgia,
+    serif;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  letter-spacing: -1px;
+  flex-shrink: 0;
+}
+.realm-brand > span {
+  font-size: 38px;
+  color: var(--realm-gold);
+}
+.realm-brand sup {
+  font-size: 8px;
+  color: var(--realm-gold);
+  margin-left: -4px;
+  align-self: flex-start;
+  margin-top: 24px;
+}
+.realm-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #807e90;
+  font-size: 8px;
+  letter-spacing: 2.2px;
+}
+.realm-breadcrumb b {
+  font-size: 10px;
+  letter-spacing: 0.2px;
+  font-weight: 400;
+  color: #b9adca;
+}
+.realm-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-shrink: 0;
+}
+.realm-header-actions > button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #9895a7;
+  padding: 5px;
+  font-size: 10px;
+}
+.realm-header-actions > button:hover,
+.realm-header-actions .audio-active {
+  color: #e2cdab;
+}
+.realm-header-actions > i {
+  height: 16px;
+  width: 1px;
+  background: #ffffff12;
+}
+.realm-header-actions .world-info {
+  border: 1px solid #a19ab870;
+  border-radius: 50%;
+  height: 17px;
+  width: 17px;
+  justify-content: center;
+  font-size: 10px;
+  padding: 0;
+  font-family: Georgia, serif;
+}
+.realm-content {
+  outline: none !important;
+  min-height: calc(100svh - 86px);
+}
+.world-map {
+  position: relative;
+  min-height: calc(100svh - 86px);
+  height: max(650px, calc(100svh - 86px));
+}
+.map-intro {
+  position: absolute;
+  top: 11%;
+  left: 7.3%;
+  z-index: 3;
+  pointer-events: none;
+}
+.realm-eyebrow {
+  color: #b4a58e;
+  font-size: 8px;
+  letter-spacing: 2.1px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.realm-eyebrow > span {
+  height: 4px;
+  width: 4px;
+  border-radius: 50%;
+  background: #c6b594;
+  box-shadow: 0 0 9px #d4b983;
+}
+.map-intro h1 {
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(37px, 3.45vw, 58px);
+  letter-spacing: -1.6px;
+  line-height: 1.2;
+  margin: 24px 0 21px;
+}
+.map-intro h1 em {
+  color: #d8c6a9;
+}
+.map-intro > p {
+  font-size: 11px;
+  line-height: 2;
+  color: #9a96a7;
+  letter-spacing: 0.2px;
+}
+.map-invitation {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 7px;
+  letter-spacing: 1.8px;
+  color: #9990a6;
+  margin-top: 30px;
+}
+.map-invitation > span:first-child {
+  font-size: 20px;
+  color: #c6b594;
+}
+.invitation-line {
+  height: 1px;
+  width: 35px;
+  background: #aaa0bd50;
+}
+.islands-scene {
+  position: absolute;
+  inset: 0 0 45px 0;
+}
+.island {
+  position: absolute;
+  padding: 0;
+  text-align: left;
+  transition: filter 0.4s;
+  isolation: isolate;
+}
+.island:hover {
+  filter: brightness(1.14);
+}
+.island .island-art {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s;
+  filter: drop-shadow(0 15px 30px #0003);
+  animation: float-island 8s ease-in-out infinite;
+}
+.island:hover .island-art {
+  transform: translateY(-9px);
+}
+.island-sky {
+  width: 370px;
+  height: 277px;
+  left: 42%;
+  top: 4%;
+}
+.island-forest {
+  width: 470px;
+  height: 352px;
+  left: 61%;
+  top: 30%;
+}
+.island-lake {
+  width: 370px;
+  height: 277px;
+  left: 22%;
+  top: 46%;
+}
+.island-forest .island-art {
+  animation-delay: -2s;
+}
+.island-lake .island-art {
+  animation-delay: -5s;
+}
+.island-aura {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse, #d3b9ff0d, transparent 65%);
+}
+.island-forest .island-aura {
+  background: radial-gradient(ellipse, #b3f3a313, transparent 65%);
+}
+.island-lake .island-aura {
+  background: radial-gradient(ellipse, #a4dbe70d, transparent 65%);
+}
+.island-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  min-width: 190px;
+  pointer-events: none;
+}
+.island-sky .island-label {
+  top: 46%;
+  left: 85%;
+}
+.island-forest .island-label {
+  top: 85%;
+  left: 44%;
+}
+.island-lake .island-label {
+  top: 68%;
+  right: 75%;
+  text-align: right;
+  align-items: flex-end;
+}
+.island-index {
+  color: #a398b0;
+  font-size: 8px;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+}
+.island-index i {
+  width: 30px;
+  height: 1px;
+  background: #a99fb04d;
+}
+.island-tag {
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  color: #7b788a;
+  white-space: nowrap;
+  margin-bottom: 8px;
+}
+.island-label strong {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-weight: 400;
+  font-size: 21px;
+  color: #d8d0e3;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+.island-label strong svg {
+  color: #b6a188;
+  transition: transform 0.3s;
+}
+.island:hover .island-label strong svg {
+  transform: translate(3px, -3px);
+}
+.island-description {
+  font-size: 9px;
+  color: #8f899f;
+  margin-top: 9px;
+  white-space: nowrap;
+}
+.island-forest strong {
+  color: #c2d5b8;
+}
+.island-lake strong {
+  color: #b8cdd9;
+}
+.island-paths {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.orbit {
+  position: absolute;
+  border: 1px solid #c9c3ed05;
+  border-radius: 50%;
+  transform: rotate(-25deg);
+  pointer-events: none;
+}
+.orbit-one {
+  width: 74%;
+  height: 70%;
+  left: 21%;
+  top: 0;
+}
+.orbit-two {
+  width: 62%;
+  height: 83%;
+  left: 26%;
+  top: 1%;
+}
+.map-coordinate {
+  position: absolute;
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: #585769;
+  pointer-events: none;
+}
+.coord-one {
+  top: 6%;
+  right: 7%;
+}
+.coord-two {
+  top: 75%;
+  left: 44%;
+  transform: rotate(-9deg);
+}
+.map-moon {
+  position: absolute;
+  right: 13%;
+  top: 12%;
+  height: 22px;
+  width: 22px;
+  border-radius: 50%;
+  box-shadow: 5px 3px 0 0 #b5b1bb55;
+  transform: rotate(-30deg);
+}
+.world-bottom {
+  position: absolute;
+  bottom: 111px;
+  left: 6%;
+  right: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.companion-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: auto;
+}
+.mote-character {
+  width: 54px;
+  height: 65px;
+  position: relative;
+  animation: mote-hover 5s ease-in-out infinite;
+  filter: drop-shadow(0 0 13px #cfb5ed28);
+}
+.mote-body {
+  position: absolute;
+  top: 12px;
+  left: 11px;
+  width: 33px;
+  height: 35px;
+  border-radius: 50% 50% 45% 45%;
+  background: linear-gradient(140deg, #e4dfc7, #ada3c4);
+  box-shadow: inset -6px -5px 10px #685b8b70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.mote-body i {
+  height: 4px;
+  width: 3px;
+  border-radius: 50%;
+  background: #45405d;
+  margin-top: 2px;
+}
+.mote-body:after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 13px;
+  width: 10px;
+  height: 13px;
+  background: #bdb0d2;
+  clip-path: polygon(0 0, 100% 0, 60% 100%);
+}
+.mote-wings:before,
+.mote-wings:after {
+  content: "";
+  position: absolute;
+  width: 17px;
+  height: 25px;
+  top: 16px;
+  left: 1px;
+  border: 1px solid #f5ecda70;
+  border-radius: 80% 10% 50% 20%;
+  transform: rotate(-35deg);
+  background: #ded2ff13;
+}
+.mote-wings:after {
+  left: 36px;
+  transform: scaleX(-1) rotate(-35deg);
+}
+.mote-spark {
+  position: absolute;
+  right: 2px;
+  top: 0;
+  font-size: 13px;
+  color: #ded0a6;
+}
+.companion-message {
+  max-width: 295px;
+  position: relative;
+  padding-right: 22px;
+}
+.companion-message > span {
+  color: #847b91;
+  font-size: 6px;
+  letter-spacing: 1.5px;
+}
+.companion-message p {
+  font:
+    italic 13px/1.7 Georgia,
+    serif;
+  color: #b0a5bc;
+  margin: 9px 0 0;
+}
+.companion-message button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #766b85;
+  padding: 0;
+}
+.world-footnote {
+  font-size: 6px;
+  letter-spacing: 1.6px;
+  color: #817c8b;
+  display: block;
+  line-height: 1.8;
+}
+.world-footnote .live-dot {
+  display: inline-block;
+  background: #93b099;
+  box-shadow: 0 0 8px #93b099;
+  margin-right: 5px;
+}
+.world-footnote p {
+  font-size: 9px;
+  letter-spacing: 0.2px;
+  color: #6e697a;
+  margin: 5px 0 0;
+}
+.island-dock {
+  position: fixed;
+  bottom: 27px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px;
+  background: #161d29db;
+  border: 1px solid #d2c5ef1a;
+  box-shadow: 0 10px 35px #0004;
+  backdrop-filter: blur(24px);
+  border-radius: 13px;
+  z-index: 15;
+  max-width: 95vw;
+}
+.island-dock > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 17px;
+  border-radius: 7px;
+  white-space: nowrap;
+  font-size: 10px;
+  color: #9894a5;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.island-dock > button:hover {
+  color: #e4d6b8;
+  background: #ffffff05;
+}
+.island-dock > button.selected {
+  color: #e0cba8;
+  background: #d1b98b12;
+  box-shadow: inset 0 0 0 1px #c9b48e22;
+}
+.island-dock small {
+  font-size: 6px;
+  color: #6e677e;
+  margin-left: 8px;
+}
+.island-dock > i {
+  width: 1px;
+  height: 22px;
+  background: #ffffff10;
+  margin: 0 4px;
+}
+.realm-edition {
+  position: fixed;
+  bottom: 11px;
+  left: 27px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 5px;
+  color: #6c6579;
+  letter-spacing: 1.4px;
+  z-index: 5;
+  pointer-events: none;
+}
+.back-to-world {
+  position: absolute;
+  z-index: 8;
+  top: 107px;
+  left: 3.8%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #9e97ac;
+  padding: 4px;
+}
+.back-to-world:hover {
+  color: #e0cba8;
+}
+.place-heading {
+  text-align: center;
+  padding-top: 55px;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+.place-heading .realm-eyebrow {
+  justify-content: center;
+}
+.place-heading h1 {
+  font:
+    400 clamp(30px, 3vw, 44px)/1.25 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -1px;
+  margin: 17px 0 11px;
+}
+.place-heading h1 em {
+  color: #cad9b5;
+  font-weight: 400;
+}
+.place-heading > p {
+  font-size: 11px;
+  color: #9aab9f;
+  letter-spacing: 0.2px;
+}
+.scene-enter {
+  animation: scene-arrive 0.7s ease-out;
+}
+.realm-loading {
+  display: grid;
+  place-items: center;
+  height: 70vh;
+  font:
+    italic 24px Georgia,
+    serif;
+  color: #d4c3a7;
+}
+.realm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 110px;
+  transform: translateX(-50%);
+  padding: 15px 20px;
+  background: #252d34f5;
+  border: 1px solid #d5c4e332;
+  box-shadow: 0 10px 40px #0006;
+  border-radius: 10px;
+  font-size: 11px;
+  color: #ded2e3;
+  z-index: 40;
+  max-width: min(90vw, 550px);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  line-height: 1.7;
+}
+.realm-toast button {
+  font-size: 21px;
+  line-height: 1;
+  color: #ab9ab6;
+  flex-shrink: 0;
+  padding: 0;
+}
+.world-guide {
+  position: relative;
+  background: #202331;
+  border: 1px solid #b9a6d72e;
+  border-radius: 18px;
+  padding: 40px;
+  width: 480px;
+  max-width: 95vw;
+  max-height: 85svh;
+  overflow: auto;
+}
+.letter-spark {
+  display: block;
+  font-size: 42px;
+  color: #d8c5a3;
+  margin-bottom: 18px;
+}
+.world-guide > .realm-eyebrow {
+  font-size: 7px;
+  letter-spacing: 1.6px;
+}
+.world-guide h2 {
+  font:
+    400 32px/1.3 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -0.6px;
+}
+.world-guide h2 em {
+  font-weight: 400;
+  color: #d6c1a1;
+}
+.world-guide p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #b5acbf;
+}
+.world-guide b {
+  color: #e1d5bd;
+  font-weight: 500;
+}
+.world-guide .privacy-note {
+  font-size: 10px;
+  color: #90879c;
+  border-top: 1px solid #ffffff12;
+  padding-top: 18px;
+}
+/* The original constellation journal, opened out to fill the island. */
+.observatory-scene {
+  position: relative;
+  min-height: calc(100svh - 86px);
+  background: radial-gradient(ellipse at 50% 45%, #402d563d, transparent 65%);
+}
+.journal-app {
+  max-width: none;
+  padding: 0 4%;
+  padding-bottom: 110px;
+}
+.journal-app > header {
+  height: 61px;
+  border: 0;
+  justify-content: flex-end;
+  pointer-events: none;
+}
+.journal-app > header .brand,
+.journal-app > header .header-tag {
+  display: none;
+}
+.journal-app .header-actions {
+  pointer-events: auto;
+  gap: 15px;
+}
+.journal-app .intro {
+  padding: 6px 0 28px;
+}
+.journal-app .intro h1 {
+  font-size: clamp(29px, 3.1vw, 46px);
+  margin-top: 13px;
+}
+.journal-app .intro p {
+  font-size: 11px;
+}
+.journal-app .eyebrow {
+  font-size: 7px;
+  letter-spacing: 2px;
+}
+.journal-app .workspace-bar {
+  padding-bottom: 14px;
+}
+.journal-app .sky {
+  height: calc(100svh - 410px);
+  min-height: 370px;
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    #241e3c70,
+    #11182760 60%,
+    #10162080
+  );
+  border-color: #c6b8e523;
+}
+.journal-app .below-sky {
+  padding: 15px 3px;
+}
+.journal-app > footer {
+  display: none;
+}
+.journal-app .toolbar {
+  bottom: 25px;
+}
+.journal-app .sky-stats {
+  bottom: 22px;
+}
+.journal-app .below-sky p {
+  font-size: 9px;
+}
+.journal-app .sky .editor {
+  top: 25px;
+  max-height: calc(100% - 100px);
+  overflow: auto;
+}
+.journal-app .editor textarea {
+  height: 100px;
+  min-height: 50px;
+}
+.journal-app .toast {
+  bottom: 110px;
+}
+.journal-app .constellation-name {
+  font-size: 16px;
+}
+/* Whisperwood */
+.realm-forest {
+  background:
+    radial-gradient(ellipse at 40% 20%, #243d3660, transparent 65%), #0d191c;
+}
+.realm-forest .aurora-a {
+  background: radial-gradient(ellipse, #6f9171, transparent 65%);
+}
+.forest-scene {
+  position: relative;
+  min-height: calc(100svh - 86px);
+  padding-bottom: 130px;
+  isolation: isolate;
+  overflow: hidden;
+}
+.forest-mist {
+  position: absolute;
+  inset: 35% -20% 0;
+  background: radial-gradient(ellipse, #74986b10, transparent 65%);
+  pointer-events: none;
+  z-index: -1;
+}
+.forest-silhouettes {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.forest-tree {
+  position: absolute;
+  bottom: 0;
+  width: 160px;
+  background: linear-gradient(90deg, #223d34, #48614c);
+  clip-path: polygon(
+    48% 0,
+    60% 20%,
+    56% 19%,
+    75% 41%,
+    65% 39%,
+    92% 66%,
+    64% 62%,
+    70% 86%,
+    56% 82%,
+    56% 100%,
+    44% 100%,
+    44% 83%,
+    17% 90%,
+    32% 65%,
+    0 68%,
+    34% 41%,
+    23% 43%,
+    43% 19%,
+    37% 23%
+  );
+}
+.grove-layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 38px;
+  width: min(1130px, 89%);
+  margin: 36px auto 0;
+  position: relative;
+  z-index: 2;
+}
+.grove-aside {
+  padding-top: 0;
+}
+.grove-card {
+  border: 1px solid #bdd3bc20;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #243b3333, #14272870);
+  padding: 24px 22px 20px;
+}
+.card-kicker {
+  font-size: 7px;
+  letter-spacing: 1.6px;
+  color: #a6bfa0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.grove-card h2 {
+  font:
+    400 26px/1.25 "Playfair Display",
+    Georgia,
+    serif;
+  letter-spacing: -0.5px;
+  color: #dae3cc;
+  margin: 17px 0 14px;
+}
+.grove-card p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: #94a69b;
+  margin: 0;
+}
+.gesture-illustration {
+  height: 122px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b0c4a3;
+  overflow: hidden;
+}
+.gesture-illustration > svg {
+  transform: rotate(-20deg);
+  opacity: 0.7;
+}
+.pinch-ring {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #d4e5a960;
+  box-shadow: 0 0 14px #c7e7a61a;
+  border-radius: 50%;
+  top: 23px;
+  left: 75px;
+  animation: pinch-pulse 3s ease-in-out infinite;
+}
+.gesture-illustration > i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #dfecad;
+  border-radius: 50%;
+  left: 64%;
+  top: 35%;
+  box-shadow: 0 0 9px #dfecad;
+}
+.gesture-illustration > i:nth-last-child(2) {
+  left: 27%;
+  top: 67%;
+  opacity: 0.7;
+}
+.gesture-illustration > i:last-child {
+  left: 72%;
+  top: 75%;
+  opacity: 0.4;
+}
+.camera-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 6px;
+  background: #c3d4a8;
+  color: #24372d;
+  width: 100%;
+  font-size: 10px;
+  padding: 12px 5px;
+  transition: background 0.2s;
+}
+.camera-button:hover {
+  background: #d8e5c4;
+}
+.camera-button.enabled {
+  background: #aec8ab18;
+  color: #bbd1ae;
+  border: 1px solid #bcd5b33b;
+}
+.camera-button:disabled {
+  cursor: wait;
+  background: #a2b69c;
+  color: #263a31;
+  font-size: 9px;
+}
+.camera-privacy {
+  display: block;
+  font-size: 7px;
+  text-align: center;
+  color: #748b7b;
+  margin-top: 13px;
+}
+.cancel-camera {
+  display: block;
+  margin: 10px auto 0;
+  font-size: 9px;
+  color: #b4c7ad;
+  text-decoration: underline;
+}
+.guide-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 17px 0;
+  color: #90a08e;
+  font-size: 9px;
+  padding: 0 2px;
+}
+.guide-toggle > span {
+  margin-left: auto;
+  font-size: 14px;
+}
+.gesture-guide {
+  padding: 0 6px 15px;
+  color: #99ac9c;
+  font-size: 10px;
+  line-height: 1.9;
+}
+.gesture-guide b {
+  font-weight: 500;
+  color: #c7d5b6;
+}
+.grove-companion {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 25px;
+  padding: 5px 3px;
+}
+.grove-companion p {
+  font:
+    italic 11px/1.7 Georgia,
+    serif;
+  color: #a6b19e;
+  margin: 0;
+}
+.grove-companion p > span {
+  display: block;
+  font:
+    5px "DM Sans",
+    sans-serif;
+  letter-spacing: 1px;
+  color: #627f70;
+  margin-top: 9px;
+  white-space: nowrap;
+}
+.fern-sprite {
+  position: relative;
+  width: 35px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 45% 45% 50% 50%;
+  background: linear-gradient(145deg, #d0c297, #9caa81);
+  box-shadow: 0 0 25px #c0d8920c;
+  transform: rotate(-6deg);
+}
+.fern-sprite > i {
+  position: absolute;
+  width: 12px;
+  height: 22px;
+  background: #a4b58a;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  top: -12px;
+  left: -1px;
+  transform: rotate(-19deg);
+}
+.fern-sprite > i:nth-child(2) {
+  left: auto;
+  right: -1px;
+  transform: rotate(19deg);
+}
+.fern-sprite span {
+  position: absolute;
+  top: 11px;
+  left: 8px;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: #2a4837;
+}
+.drawing-workspace {
+  min-width: 0;
+}
+.drawing-topline {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #8a9f94;
+  font-size: 7px;
+  letter-spacing: 0.8px;
+  padding: 3px 1px 14px;
+}
+.drawing-topline > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 6px;
+  letter-spacing: 1.1px;
+}
+.drawing-topline .live-dot {
+  width: 3px;
+  height: 3px;
+  background: #bacb9e;
+  box-shadow: 0 0 8px #bacb9e;
+}
+.drawing-topline > span:last-child {
+  letter-spacing: 0;
+  font-size: 8px;
+  color: #6d8a7c;
+}
+.drawing-surface {
+  position: relative;
+  width: 100%;
+  height: clamp(320px, 43svh, 530px);
+  border: 1px solid #b3d1b32b;
+  border-radius: 12px 12px 0 0;
+  overflow: hidden;
+  box-shadow: 0 20px 70px #0002;
+}
+.drawing-board {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+  cursor: crosshair;
+}
+.canvas-empty {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #a2ba9b;
+}
+.canvas-empty > svg {
+  opacity: 0.7;
+}
+.canvas-empty > p {
+  font:
+    italic 21px "Playfair Display",
+    Georgia,
+    serif;
+  color: #93aa9c;
+  margin: 16px 0;
+}
+.canvas-empty > span {
+  font-size: 6px;
+  letter-spacing: 1.8px;
+  color: #597c6c;
+}
+.camera-preview {
+  position: absolute;
+  bottom: 13px;
+  right: 13px;
+  width: 130px;
+  height: 101px;
+  opacity: 0;
+  pointer-events: none;
+  background: #0f1e23;
+  border: 1px solid #c2d7b330;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.camera-preview.visible {
+  opacity: 1;
+}
+.camera-preview > video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+.camera-preview > span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #0c1c20d9;
+  font-size: 4px;
+  letter-spacing: 0.8px;
+  padding: 5px;
+  color: #bdcbae;
+}
+.drawing-toolbar {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  background: #1d302dc9;
+  border: 1px solid #b3d1b320;
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+  padding: 15px 17px;
+}
+.ink-colors {
+  display: flex;
+  gap: 11px;
+}
+.ink-colors > button {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--ink-color);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #1a2b26;
+  position: relative;
+}
+.ink-colors > button.chosen:after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border: 1px solid var(--ink-color);
+  border-radius: 50%;
+  opacity: 0.4;
+}
+.brush-widths {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: 4px;
+}
+.brush-widths > button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 24px;
+  color: #7d9989;
+  border-radius: 4px;
+}
+.brush-widths > button > i {
+  background: currentColor;
+  border-radius: 50%;
+}
+.brush-widths > button.chosen {
+  background: #d3e2bd10;
+  color: #c5d7b4;
+}
+.drawing-tool-separator {
+  height: 20px;
+  width: 1px;
+  background: #cee1bf15;
+}
+.drawing-toolbar > button {
+  color: #9db2a3;
+  padding: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drawing-toolbar > button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.drawing-toolbar > .save-art {
+  margin-left: auto;
+  gap: 8px;
+  color: #d2dabb;
+  font-size: 9px;
+  white-space: nowrap;
+}
+.drawing-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  font-size: 7px;
+  color: #6d8879;
+}
+.drawing-caption > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.storage-warning {
+  color: #e2b79c !important;
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+/* Moonwell */
+.realm-lake {
+  background:
+    radial-gradient(ellipse at 50% 27%, #2e385880, transparent 65%), #111827;
+}
+.moonwell-scene {
+  min-height: max(760px, calc(100svh - 86px));
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: 150px;
+}
+.moonwell-scene .place-heading {
+  padding-top: 52px;
+}
+.moonwell-scene .place-heading h1 em {
+  color: #c8c9e5;
+}
+.moonwell-scene .place-heading p {
+  color: #a0a5bd;
+}
+.moonwell-moon {
+  position: absolute;
+  left: 76%;
+  top: 11%;
+  width: 47px;
+  height: 47px;
+  border-radius: 50%;
+  box-shadow: -11px 4px 0 0 #e8d9b4;
+  transform: rotate(-25deg);
+  filter: drop-shadow(0 0 22px #e9ddb530);
+  z-index: -1;
+}
+.moonwell-mountains {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 16%;
+  height: 32%;
+  clip-path: polygon(
+    0 34%,
+    8% 45%,
+    17% 16%,
+    27% 36%,
+    36% 70%,
+    48% 60%,
+    59% 74%,
+    72% 26%,
+    82% 46%,
+    89% 18%,
+    100% 33%,
+    100% 100%,
+    0 100%
+  );
+  background: #26344b;
+  z-index: -1;
+  opacity: 0.65;
+}
+.mountain-front {
+  top: 27%;
+  height: 22%;
+  background: #1b2b3d;
+  opacity: 0.9;
+  clip-path: polygon(
+    0 10%,
+    9% 30%,
+    18% 60%,
+    28% 44%,
+    38% 89%,
+    50% 79%,
+    61% 86%,
+    71% 59%,
+    80% 74%,
+    91% 19%,
+    100% 38%,
+    100% 100%,
+    0 100%
+  );
+}
+.moonwell-water {
+  position: absolute;
+  inset: 43% 0 0;
+  background: linear-gradient(
+    180deg,
+    #35445d35,
+    #172c403b 20%,
+    #11202e80 70%,
+    #101a29 100%
+  );
+  z-index: -1;
+  border-top: 1px solid #abb9d20c;
+}
+.moon-reflection {
+  position: absolute;
+  top: 45%;
+  left: 70%;
+  height: 22%;
+  width: 14%;
+  background: linear-gradient(180deg, #c5d2d510, transparent);
+  filter: blur(10px);
+  clip-path: polygon(45% 0, 65% 0, 100% 100%, 0 100%);
+  z-index: -1;
+}
+.water-ripples {
+  position: absolute;
+  inset: 44% 0 12%;
+  pointer-events: none;
+  overflow: hidden;
+}
+.water-ripples > i {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 14px;
+  border-bottom: 1px solid #bfc6de15;
+  border-radius: 50%;
+  animation: ripple 7s ease-in-out infinite;
+}
+.floating-lantern {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 70px;
+  animation: lantern-float 7s ease-in-out infinite;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+}
+.lantern-light {
+  position: absolute;
+  inset: -12px;
+  background: radial-gradient(ellipse, #eed59829, transparent 65%);
+  pointer-events: none;
+}
+.lantern-body {
+  position: relative;
+  width: 21px;
+  height: 31px;
+  border-radius: 6px 6px 8px 8px;
+  background: linear-gradient(90deg, #b79c66, #ecd4a1 45%, #ba9e6b);
+  border-top: 2px solid #b9a376;
+  border-bottom: 2px solid #aa9162;
+  box-shadow: 0 0 17px #ffdc9b25;
+  transition: filter 0.3s;
+}
+.lantern-body:before {
+  content: "";
+  position: absolute;
+  inset: 4px 2px;
+  border-top: 1px solid #ffeece77;
+  border-bottom: 1px solid #ffeece66;
+}
+.lantern-body > i {
+  position: absolute;
+  left: 48%;
+  height: 100%;
+  width: 1px;
+  background: #ffefc566;
+}
+.floating-lantern:hover .lantern-body {
+  filter: brightness(1.3);
+}
+.lantern-reflection {
+  position: absolute;
+  top: 54px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(#efdca624, transparent);
+  filter: blur(3px);
+  transform: scaleY(0.6);
+  border-radius: 50%;
+}
+.lake-empty {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  color: #9b9bb1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.lake-empty > span {
+  font-size: 26px;
+  color: #d3c3a1;
+  opacity: 0.5;
+}
+.lake-empty > p {
+  font:
+    italic 14px Georgia,
+    serif;
+  color: #8e97ab;
+}
+.breathing-stone {
+  position: absolute;
+  top: 45%;
+  left: 6%;
+  display: flex;
+  align-items: center;
+  gap: 19px;
+  z-index: 3;
+}
+.breathe-orb {
+  width: 64px;
+  height: 64px;
+  border: 1px solid #b3c6db38;
+  border-radius: 50%;
+  background: radial-gradient(circle, #a8c9df1f, transparent 70%);
+  color: #bdcddd;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.orb-ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 1px solid #bbcce515;
+  transition: transform 4s linear;
+}
+.orb-ring.second {
+  inset: -19px;
+  border-color: #bbcce509;
+}
+.phase-0 .orb-ring {
+  transform: scale(1.3);
+}
+.phase-1 .orb-ring {
+  transform: scale(1.3);
+}
+.phase-2 .orb-ring {
+  transform: scale(0.8);
+  transition-duration: 6s;
+}
+.breathe-number {
+  font:
+    22px Georgia,
+    serif;
+}
+.breathing-stone .card-kicker {
+  font-size: 6px;
+  color: #8595af;
+  letter-spacing: 1.5px;
+}
+.breathing-stone p {
+  font:
+    italic 17px Georgia,
+    serif;
+  color: #c5c8da;
+  margin: 9px 0;
+}
+.breathe-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 8px;
+  color: #8392ac;
+  padding: 0;
+}
+.lantern-compose {
+  position: absolute;
+  width: min(530px, 80%);
+  left: 50%;
+  bottom: 140px;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+.lantern-compose > label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #9aa3b8;
+  margin-bottom: 16px;
+}
+.lantern-input {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #b9c7de2b;
+  background: #1f2c40b5;
+  backdrop-filter: blur(20px);
+  border-radius: 11px;
+  padding: 16px 16px 16px 22px;
+  box-shadow: 0 10px 40px #0002;
+}
+.lantern-input textarea {
+  width: 100%;
+  border: 0;
+  background: none;
+  resize: none;
+  outline-offset: 4px;
+  color: #ded9e4;
+  font:
+    italic 20px/1.5 "Playfair Display",
+    Georgia,
+    serif;
+  padding: 1px;
+}
+.lantern-input textarea::placeholder {
+  color: #6c7b94;
+}
+.lantern-input > button {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 37px;
+  height: 37px;
+  border: 1px solid #d7c49850;
+  background: #d7c49815;
+  border-radius: 50%;
+  color: #e0caa0;
+}
+.lantern-input > button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+.lantern-compose-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 7px;
+  color: #71829a;
+  margin-top: 13px;
+  gap: 15px;
+}
+.lantern-compose-meta button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #93a0b5;
+  font-size: 7px;
+  padding: 0;
+}
+.lantern-compose-meta button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.lake-companion {
+  position: absolute;
+  bottom: 166px;
+  right: 5.5%;
+  width: 140px;
+  text-align: center;
+  pointer-events: none;
+}
+.moon-jelly {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 28px;
+  border-radius: 50% 50% 25% 25%;
+  background: linear-gradient(#d8d5ee, #a6a9cf90);
+  box-shadow: 0 0 25px #b6c0ef15;
+  animation: mote-hover 6s infinite ease-in-out;
+}
+.moon-jelly:before {
+  content: "••";
+  font-size: 11px;
+  letter-spacing: 4px;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: #414760;
+}
+.moon-jelly > i {
+  position: absolute;
+  top: 24px;
+  width: 1px;
+  height: 17px;
+  background: linear-gradient(#b3b8dc, transparent);
+  left: 9px;
+}
+.moon-jelly > i:nth-child(2) {
+  left: 17px;
+  height: 23px;
+}
+.moon-jelly > i:last-child {
+  left: 25px;
+}
+.lake-companion p {
+  font:
+    italic 11px Georgia,
+    serif;
+  color: #9ba8c2;
+  margin: 25px 0 0;
+}
+.lake-companion p > span {
+  display: block;
+  font:
+    5px "DM Sans",
+    sans-serif;
+  color: #687e9c;
+  letter-spacing: 1px;
+  margin-top: 10px;
+}
+.lantern-letter {
+  position: relative;
+  border: 1px solid #c8b99c38;
+  background: linear-gradient(135deg, #2b2e3f, #202b3b);
+  border-radius: 15px;
+  padding: 37px;
+  width: 460px;
+  max-width: 90vw;
+  max-height: 85svh;
+  overflow: auto;
+  box-shadow: 0 20px 60px #0004;
+}
+.lantern-letter .card-kicker {
+  font-size: 6px;
+  color: #b8a98e;
+}
+.lantern-letter > p {
+  font:
+    italic 24px/1.7 "Playfair Display",
+    Georgia,
+    serif;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #dfd5de;
+  margin: 27px 0 32px;
+}
+.lantern-letter > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #ffffff0e;
+  padding-top: 18px;
+  gap: 20px;
+}
+.lantern-letter time {
+  font-size: 8px;
+  color: #8d91a8;
+}
+.lantern-letter > div button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  color: #b5a58e;
+  padding: 0;
+}
+@keyframes float-island {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -12px;
+  }
+}
+@keyframes mote-hover {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(3deg);
+  }
+}
+@keyframes lantern-float {
+  0%,
+  100% {
+    translate: 0 0;
+    rotate: -3deg;
+  }
+  50% {
+    translate: 0 -7px;
+    rotate: 3deg;
+  }
+}
+@keyframes scene-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes pinch-pulse {
+  50% {
+    scale: 1.2;
+    opacity: 0.5;
+  }
+}
+@keyframes shooting {
+  0%,
+  90%,
+  100% {
+    opacity: 0;
+    translate: 0 0;
+  }
+  92% {
+    opacity: 0.6;
+  }
+  96% {
+    opacity: 0;
+    translate: -200px 140px;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes ripple {
+  50% {
+    opacity: 0.25;
+    scale: 1.12;
+  }
+}
+@media (min-width: 1700px) {
+  .world-map {
+    max-width: 1900px;
+    margin: auto;
+  }
+  .island-sky {
+    width: 450px;
+    height: 337px;
+  }
+  .island-forest {
+    width: 560px;
+    height: 420px;
+  }
+  .island-lake {
+    width: 450px;
+    height: 337px;
+  }
+  .grove-layout {
+    width: min(1350px, 85%);
+    grid-template-columns: 250px 1fr;
+    gap: 55px;
+  }
+  .grove-card {
+    padding: 27px;
+  }
+  .drawing-surface {
+    height: 50svh;
+  }
+  .map-intro {
+    top: 13%;
+  }
+}
+@media (max-width: 1200px) {
+  .island-sky {
+    left: 42%;
+    width: 315px;
+    height: 236px;
+    top: 7%;
+  }
+  .island-forest {
+    left: 60%;
+    width: 380px;
+    height: 285px;
+    top: 34%;
+  }
+  .island-lake {
+    left: 23%;
+    width: 315px;
+    height: 236px;
+    top: 48%;
+  }
+  .island-sky .island-label {
+    left: 80%;
+    top: 38%;
+  }
+  .island-label strong {
+    font-size: 18px;
+  }
+  .island-tag {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .island-description {
+    font-size: 8px;
+  }
+  .island-label {
+    min-width: 150px;
+  }
+  .map-intro {
+    left: 6%;
+    top: 12%;
+  }
+  .map-intro h1 {
+    font-size: 40px;
+  }
+  .map-intro > p {
+    font-size: 10px;
+  }
+  .map-intro .realm-eyebrow {
+    font-size: 7px;
+    letter-spacing: 1.5px;
+  }
+  .island-dock > button {
+    padding: 12px 13px;
+    font-size: 9px;
+    gap: 8px;
+  }
+  .island-dock small {
+    display: none;
+  }
+  .grove-layout {
+    gap: 25px;
+    grid-template-columns: 215px 1fr;
+    width: 91%;
+  }
+  .grove-card {
+    padding: 20px 18px;
+  }
+  .drawing-toolbar {
+    gap: 12px;
+    padding: 15px 12px;
+  }
+  .brush-widths {
+    gap: 2px;
+  }
+  .ink-colors {
+    gap: 9px;
+  }
+  .lake-companion {
+    right: 3%;
+    width: 110px;
+  }
+  .lake-companion p {
+    font-size: 10px;
+  }
+}
+@media (max-width: 950px) {
+  .realm-breadcrumb > span {
+    display: none;
+  }
+  .realm-header {
+    padding: 0 4%;
+    gap: 15px;
+  }
+  .realm-breadcrumb {
+    margin-right: auto;
+    margin-left: 10px;
+    letter-spacing: 0;
+  }
+  .realm-breadcrumb > svg {
+    display: none;
+  }
+  .map-intro h1 {
+    font-size: 35px;
+  }
+  .island-sky {
+    left: 44%;
+    width: 290px;
+    height: 217px;
+    top: 12%;
+  }
+  .island-sky .island-label {
+    left: 50%;
+    top: 84%;
+  }
+  .island-forest {
+    left: 54%;
+    width: 360px;
+    height: 270px;
+    top: 44%;
+  }
+  .island-forest .island-label {
+    top: 82%;
+    left: 47%;
+  }
+  .island-lake {
+    left: 8%;
+    width: 310px;
+    height: 232px;
+    top: 45%;
+  }
+  .island-lake .island-label {
+    top: 84%;
+    right: 35%;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .island-index {
+    margin-bottom: 6px;
+  }
+  .island-description {
+    margin-top: 6px;
+  }
+  .map-intro > p {
+    max-width: 230px;
+  }
+  .map-intro > p br {
+    display: none;
+  }
+  .map-invitation {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+  .world-bottom {
+    bottom: 110px;
+  }
+  .world-footnote {
+    display: none;
+  }
+  .companion-message p {
+    font-size: 11px;
+  }
+  .island-dock > button {
+    font-size: 8px;
+    padding: 12px 10px;
+    gap: 8px;
+  }
+  .grove-layout {
+    grid-template-columns: 190px 1fr;
+    gap: 19px;
+  }
+  .grove-card {
+    padding: 18px 15px;
+  }
+  .grove-card h2 {
+    font-size: 23px;
+  }
+  .grove-card p {
+    font-size: 9px;
+  }
+  .camera-button {
+    font-size: 9px;
+  }
+  .drawing-toolbar {
+    flex-wrap: wrap;
+    gap: 9px;
+    padding: 12px;
+  }
+  .drawing-toolbar > .save-art span {
+    display: none;
+  }
+  .ink-colors {
+    gap: 8px;
+  }
+  .brush-widths {
+    margin-left: 0;
+    gap: 0;
+  }
+  .brush-widths > button {
+    width: 19px;
+  }
+  .grove-companion {
+    gap: 10px;
+  }
+  .grove-companion p {
+    font-size: 9px;
+  }
+  .grove-companion p > span {
+    font-size: 4px;
+    letter-spacing: 0.6px;
+  }
+  .lake-companion {
+    display: none;
+  }
+  .breathing-stone {
+    left: 7%;
+    top: 44%;
+    gap: 16px;
+  }
+  .breathing-stone .card-kicker {
+    font-size: 5px;
+  }
+  .breathing-stone p {
+    font-size: 14px;
+  }
+  .breathe-orb {
+    width: 50px;
+    height: 50px;
+  }
+  .lantern-compose {
+    width: 540px;
+    max-width: 80%;
+  }
+  .moonwell-moon {
+    left: 86%;
+    top: 14%;
+    width: 33px;
+    height: 33px;
+  }
+  .journal-app .sky {
+    min-height: 390px;
+  }
+  .realm-edition {
+    display: none;
+  }
+  .coord-two {
+    left: 40%;
+    top: 81%;
+    font-size: 5px;
+  }
+  .map-moon {
+    right: 15%;
+    top: 10%;
+  }
+}
+@media (max-width: 650px) {
+  .realm-header {
+    height: 73px;
+    padding: 0 5%;
+    gap: 10px;
+  }
+  .realm-brand {
+    font-size: 23px;
+    gap: 8px;
+  }
+  .realm-brand > span {
+    font-size: 32px;
+  }
+  .realm-brand sup {
+    margin-top: 18px;
+  }
+  .realm-header-actions {
+    gap: 16px;
+  }
+  .realm-header-actions > button > span {
+    display: none;
+  }
+  .realm-header-actions > i {
+    display: none;
+  }
+  .realm-header-actions > .world-info {
+    height: 16px;
+    width: 16px;
+    font-size: 9px;
+  }
+  .realm-breadcrumb {
+    display: none;
+  }
+  .realm-content {
+    min-height: calc(100svh - 73px);
+  }
+  .world-map {
+    height: 1060px;
+    min-height: calc(100svh - 73px);
+  }
+  .map-intro {
+    left: 8%;
+    top: 45px;
+    right: 5%;
+  }
+  .map-intro h1 {
+    font-size: 38px;
+    margin: 19px 0 15px;
+    letter-spacing: -1.4px;
+  }
+  .map-intro > p {
+    font-size: 10px;
+    max-width: 300px;
+    line-height: 1.9;
+  }
+  .map-intro .realm-eyebrow {
+    font-size: 6px;
+    letter-spacing: 1.7px;
+  }
+  .map-invitation {
+    font-size: 6px;
+    margin-top: 20px;
+    gap: 9px;
+    letter-spacing: 1.2px;
+  }
+  .map-invitation > span:first-child {
+    font-size: 18px;
+  }
+  .islands-scene {
+    inset: 270px 0 70px;
+  }
+  .island-sky {
+    left: 22%;
+    width: 250px;
+    height: 187px;
+    top: 0;
+  }
+  .island-sky .island-label {
+    top: 69%;
+    left: 66%;
+  }
+  .island-forest {
+    left: 17%;
+    width: 310px;
+    height: 232px;
+    top: 27%;
+  }
+  .island-forest .island-label {
+    top: 68%;
+    left: -8%;
+    text-align: right;
+    align-items: flex-end;
+  }
+  .island-lake {
+    left: 15%;
+    width: 260px;
+    height: 195px;
+    top: 61%;
+  }
+  .island-lake .island-label {
+    top: 61%;
+    right: auto;
+    left: 71%;
+    text-align: left;
+    align-items: flex-start;
+  }
+  .island-label {
+    min-width: 0;
+  }
+  .island-label strong {
+    font-size: 16px;
+    gap: 6px;
+  }
+  .island-label strong svg {
+    height: 12px;
+    width: 12px;
+  }
+  .island-tag {
+    font-size: 4px;
+    letter-spacing: 0.8px;
+  }
+  .island-description {
+    font-size: 7px;
+    max-width: 140px;
+    white-space: normal;
+    line-height: 1.7;
+  }
+  .island-index {
+    font-size: 6px;
+    gap: 6px;
+    margin-bottom: 7px;
+  }
+  .island-index i {
+    width: 20px;
+  }
+  .island-paths {
+    opacity: 0.6;
+  }
+  .island-tag {
+    margin-bottom: 5px;
+    max-width: 140px;
+    white-space: normal;
+    line-height: 1.7;
+  }
+  .island-sky .island-label strong {
+    white-space: normal;
+    max-width: 130px;
+    line-height: 1.4;
+  }
+  .island-lake .island-label strong {
+    white-space: normal;
+  }
+  .island-forest .island-label strong {
+    white-space: normal;
+    max-width: 130px;
+  }
+  .map-coordinate {
+    display: none;
+  }
+  .map-moon {
+    right: 12%;
+    top: -22%;
+    width: 18px;
+    height: 18px;
+    opacity: 0.5;
+  }
+  .world-bottom {
+    bottom: 87px;
+    left: 6%;
+    right: 6%;
+  }
+  .companion-wrap {
+    gap: 13px;
+  }
+  .companion-message {
+    max-width: 250px;
+  }
+  .companion-message > span {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .companion-message p {
+    font-size: 11px;
+    max-width: 225px;
+    margin-top: 6px;
+  }
+  .mote-character {
+    scale: 0.85;
+  }
+  .island-dock {
+    bottom: 15px;
+    gap: 3px;
+    padding: 6px;
+    border-radius: 12px;
+    width: calc(100% - 28px);
+    justify-content: space-around;
+    max-width: 430px;
+  }
+  .island-dock > button {
+    font-size: 6px;
+    padding: 9px 5px;
+    gap: 7px;
+    flex-direction: column;
+    flex: 1;
+    letter-spacing: 0.1px;
+    min-width: 0;
+  }
+  .island-dock > button svg {
+    width: 17px;
+    height: 17px;
+  }
+  .island-dock > button span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  .island-dock > i {
+    margin: 0 1px;
+    height: 26px;
+  }
+  .back-to-world {
+    top: 90px;
+    left: 5%;
+    font-size: 8px;
+  }
+  .place-heading {
+    padding-top: 69px;
+  }
+  .place-heading h1 {
+    font-size: 32px;
+    margin: 15px 0 11px;
+    letter-spacing: -1px;
+  }
+  .place-heading > p {
+    font-size: 9px;
+    padding: 0 20px;
+    line-height: 1.8;
+  }
+  .place-heading .realm-eyebrow {
+    font-size: 6px;
+    letter-spacing: 1.5px;
+  }
+  .grove-layout {
+    width: 90%;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-top: 27px;
+  }
+  .grove-aside {
+    display: contents;
+  }
+  .grove-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 18px;
+    padding: 20px;
+    order: 0;
+  }
+  .grove-card .card-kicker {
+    grid-column: 1/3;
+    font-size: 6px;
+  }
+  .grove-card h2 {
+    font-size: 23px;
+    margin: 7px 0;
+  }
+  .grove-card p {
+    font-size: 9px;
+    line-height: 1.9;
+    margin-top: 7px;
+  }
+  .grove-card h2 br {
+    display: none;
+  }
+  .gesture-illustration {
+    display: none;
+  }
+  .camera-button {
+    grid-column: 1/3;
+    font-size: 10px;
+    margin-top: 5px;
+    padding: 12px;
+  }
+  .camera-privacy {
+    grid-column: 1/3;
+    font-size: 7px;
+    margin: 0;
+  }
+  .cancel-camera {
+    grid-column: 1/3;
+  }
+  .guide-toggle {
+    order: 2;
+    margin: 0 3px;
+  }
+  .gesture-guide {
+    order: 3;
+    padding-bottom: 0;
+    margin-top: -17px;
+  }
+  .grove-companion {
+    order: 4;
+    justify-content: center;
+    margin-top: 0;
+  }
+  .grove-companion p {
+    font-size: 11px;
+  }
+  .grove-companion p > span {
+    font-size: 5px;
+  }
+  .drawing-workspace {
+    order: 1;
+  }
+  .drawing-surface {
+    height: 360px;
+  }
+  .drawing-topline {
+    padding-bottom: 13px;
+  }
+  .drawing-topline > span:first-child {
+    font-size: 5px;
+    letter-spacing: 0.8px;
+    max-width: 63%;
+  }
+  .drawing-topline > span:last-child {
+    font-size: 6px;
+    max-width: 35%;
+    text-align: right;
+  }
+  .drawing-toolbar {
+    padding: 15px 12px;
+    gap: 10px;
+  }
+  .drawing-toolbar .brush-widths {
+    gap: 1px;
+  }
+  .drawing-toolbar .save-art {
+    margin-left: auto;
+  }
+  .drawing-tool-separator {
+    height: 16px;
+  }
+  .ink-colors {
+    gap: 8px;
+  }
+  .ink-colors > button {
+    width: 15px;
+    height: 15px;
+  }
+  .drawing-caption {
+    font-size: 6px;
+  }
+  .canvas-empty > p {
+    font-size: 18px;
+  }
+  .canvas-empty > span {
+    font-size: 5px;
+  }
+  .camera-preview {
+    width: 90px;
+    height: 72px;
+    bottom: 9px;
+    right: 9px;
+  }
+  .camera-preview > span {
+    font-size: 3px;
+  }
+  .forest-scene {
+    padding-bottom: 115px;
+  }
+  .observatory-scene {
+    min-height: calc(100svh - 73px);
+  }
+  .journal-app {
+    padding: 0 5% 95px;
+  }
+  .journal-app > header {
+    height: 60px;
+  }
+  .journal-app .header-actions {
+    gap: 10px;
+  }
+  .journal-app .header-actions .icon-button svg {
+    width: 15px;
+    height: 15px;
+  }
+  .journal-app .export-button {
+    font-size: 8px;
+    gap: 6px;
+  }
+  .journal-app .intro {
+    padding: 10px 0 23px;
+  }
+  .journal-app .intro h1 {
+    font-size: 30px;
+    line-height: 1.3;
+    margin-top: 14px;
+  }
+  .journal-app .intro .eyebrow {
+    font-size: 5px;
+    letter-spacing: 1.5px;
+  }
+  .journal-app .intro p {
+    font-size: 9px;
+    padding: 0 5px;
+    line-height: 1.8;
+  }
+  .journal-app .workspace-bar {
+    padding-bottom: 13px;
+  }
+  .journal-app .sky {
+    height: calc(100svh - 380px);
+    min-height: 390px;
+  }
+  .journal-app .sky-stats {
+    bottom: 10px;
+    font-size: 6px;
+  }
+  .journal-app .toolbar {
+    bottom: 30px;
+  }
+  .journal-app .below-sky {
+    padding: 15px 0;
+    gap: 15px;
+  }
+  .journal-app .below-sky p {
+    font-size: 7px;
+    max-width: 210px;
+  }
+  .journal-app .below-sky button {
+    font-size: 8px;
+    gap: 4px;
+  }
+  .journal-app .sky-bottom-hint {
+    font-size: 7px;
+    bottom: 101px;
+  }
+  .journal-app .sky .editor {
+    top: 20px;
+    width: calc(100% - 30px);
+    max-height: calc(100% - 100px);
+  }
+  .journal-app .editor .note-title {
+    font-size: 19px;
+    margin: 17px 0 12px;
+  }
+  .journal-app .editor textarea {
+    height: 80px;
+    font-size: 11px;
+  }
+  .journal-app .star-label {
+    font-size: 7px;
+  }
+  .journal-app .sky-corner {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+  .journal-app .saved {
+    font-size: 7px;
+  }
+  .journal-app .constellation-name {
+    font-size: 13px;
+  }
+  .moonwell-scene {
+    min-height: max(800px, calc(100svh - 73px));
+    padding-bottom: 100px;
+  }
+  .moonwell-scene .place-heading {
+    padding-top: 70px;
+  }
+  .moonwell-scene .place-heading h1 {
+    font-size: 34px;
+  }
+  .moonwell-scene .place-heading p {
+    max-width: 300px;
+    margin: auto;
+  }
+  .moonwell-moon {
+    top: 31%;
+    left: 79%;
+    width: 28px;
+    height: 28px;
+    box-shadow: -7px 3px 0 0 #e8d9b4;
+  }
+  .moonwell-mountains {
+    top: 28%;
+    height: 22%;
+  }
+  .mountain-front {
+    top: 36%;
+    height: 16%;
+  }
+  .moonwell-water {
+    top: 49%;
+  }
+  .moon-reflection {
+    top: 52%;
+  }
+  .water-ripples {
+    top: 50%;
+  }
+  .lake-empty {
+    top: 48%;
+    white-space: normal;
+    width: 100%;
+  }
+  .lake-empty > p {
+    font-size: 12px;
+  }
+  .breathing-stone {
+    top: 29%;
+    left: 12%;
+    gap: 19px;
+  }
+  .breathe-orb {
+    height: 42px;
+    width: 42px;
+  }
+  .orb-ring {
+    inset: -7px;
+  }
+  .orb-ring.second {
+    inset: -14px;
+  }
+  .breathing-stone .card-kicker {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .breathing-stone p {
+    font-size: 13px;
+  }
+  .breathe-toggle {
+    font-size: 7px;
+  }
+  .breathe-number {
+    font-size: 18px;
+  }
+  .lantern-compose {
+    bottom: 111px;
+    width: 88%;
+    max-width: 88%;
+  }
+  .lantern-compose > label {
+    font-size: 8px;
+    gap: 7px;
+    margin-bottom: 13px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .lantern-compose > label svg {
+    width: 12px;
+    flex-shrink: 0;
+  }
+  .lantern-input {
+    padding: 15px 13px 15px 19px;
+    gap: 10px;
+  }
+  .lantern-input textarea {
+    font-size: 20px;
+  }
+  .lantern-input > button {
+    width: 32px;
+    height: 32px;
+  }
+  .lantern-compose-meta {
+    font-size: 6px;
+    line-height: 1.8;
+    margin-top: 11px;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .lantern-compose-meta > span {
+    max-width: 60%;
+  }
+  .lantern-compose-meta button {
+    font-size: 6px;
+    white-space: nowrap;
+  }
+  .floating-lantern {
+    scale: 0.85;
+  }
+  .lantern-letter {
+    padding: 29px;
+  }
+  .lantern-letter > p {
+    font-size: 21px;
+  }
+  .realm-toast {
+    bottom: 100px;
+    font-size: 10px;
+    padding: 13px 16px;
+    width: max-content;
+    max-width: 88vw;
+    gap: 15px;
+  }
+  .world-guide {
+    padding: 30px;
+  }
+  .world-guide h2 {
+    font-size: 29px;
+  }
+  .world-guide p {
+    font-size: 11px;
+  }
+  .world-guide .realm-eyebrow {
+    font-size: 6px;
+  }
+}
+@media (max-width: 380px) {
+  .island-sky {
+    left: 14%;
+  }
+  .island-forest {
+    left: 9%;
+  }
+  .island-lake {
+    left: 8%;
+  }
+  .island-lake .island-label {
+    left: 69%;
+  }
+  .island-sky .island-label {
+    left: 66%;
+  }
+  .island-forest .island-label {
+    left: -3%;
+  }
+  .map-intro h1 {
+    font-size: 34px;
+  }
+  .drawing-toolbar {
+    gap: 7px;
+    padding: 14px 9px;
+  }
+  .ink-colors {
+    gap: 7px;
+  }
+  .brush-widths > button {
+    width: 17px;
+  }
+  .realm-header-actions {
+    gap: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene-enter {
+    animation: none;
+  }
+  .orb-ring {
+    transition: none !important;
+  }
+}

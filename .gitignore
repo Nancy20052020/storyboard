@@ -4,3 +4,9 @@ out/
 .env*
 !.env.example
 *.tsbuildinfo
+
+# Generated from the pinned MediaPipe dependency by postinstall
+public/hand-tracking/
+
+playwright-report/
+test-results/
