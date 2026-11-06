@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   ArrowUp,
   BookOpen,
-  Download,
   Pause,
   Play,
   Trash2,
@@ -29,7 +28,9 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
     [second, setSecond] = useState(0),
     [notice, setNotice] = useState(""),
     [page, setPage] = useState(0),
-    [pageSize, setPageSize] = useState(24);
+    [pageSize, setPageSize] = useState(24),
+    [launch, setLaunch] = useState(0),
+    [leaving, setLeaving] = useState<string | null>(null);
   const input = useRef<HTMLTextAreaElement>(null),
     close = useRef<HTMLButtonElement>(null),
     origin = useRef<HTMLElement | null>(null);
@@ -134,7 +135,7 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
     if (!value) return;
     if (lanterns.length >= 100) {
       setNotice(
-        "Your well holds 100 lanterns. Export your thoughts, then remove a few to make room.",
+        "Your well holds 100 lanterns. Let a thought go to make a little room.",
       );
       return;
     }
@@ -149,23 +150,24 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
       },
     ]);
     setPage(Math.floor(lanterns.length / pageSize));
+    setLaunch((n) => n + 1);
     setText("");
     onChime();
     setNotice("A thought set afloat. It will be here when you return.");
     input.current?.focus();
   }
-  function download() {
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(lanterns, null, 2)], {
-        type: "application/json",
-      }),
-    );
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "my-moonwell-lanterns.json";
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  useEffect(() => {
+    if (!leaving) return;
+    const delay = matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 350
+      : 4200;
+    const timeout = setTimeout(() => {
+      setLanterns((items) => items.filter((l) => l.id !== leaving));
+      setLeaving(null);
+      setNotice("A little lighter. Your thought has floated away.");
+    }, delay);
+    return () => clearTimeout(timeout);
+  }, [leaving]);
   return (
     <section
       className="moonwell-scene scene-enter"
@@ -186,6 +188,15 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
         <p>Some things feel lighter when you give them to the water.</p>
       </div>
       <div className="moonwell-stage" aria-label="Open water and lanterns">
+        {launch > 0 && (
+          <div key={launch} className="launched-lantern" aria-hidden="true">
+            <span className="lantern-light" />
+            <span className="lantern-body">
+              <i />
+            </span>
+            <span className="lantern-reflection" />
+          </div>
+        )}
         <div className="water-ripples" aria-hidden="true">
           {Array.from({ length: 8 }, (_, i) => (
             <i
@@ -202,7 +213,7 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
           {visibleLanterns.map((l, i) => (
             <button
               key={l.id}
-              className="floating-lantern"
+              className={`floating-lantern ${leaving === l.id ? "is-floating-away" : ""}`}
               style={{
                 gridColumn: ((i * 5) % (pageSize === 12 ? 4 : 8)) + 1,
                 gridRow: Math.floor(i / (pageSize === 12 ? 4 : 8)) + 1,
@@ -327,18 +338,25 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
             <span className={!saved ? "storage-warning" : ""}>
               {saved
                 ? "Only you and the moon. Saved on this device."
-                : "Storage unavailable · export to keep your lanterns."}
+                : "Changes may not be saved on this device."}
             </span>
-            <button onClick={download} disabled={!lanterns.length}>
-              <Download size={12} /> Export {lanterns.length}{" "}
-              {lanterns.length === 1 ? "lantern" : "lanterns"}
-            </button>
           </div>
         </div>
       </div>
       {notice && (
         <div className="realm-toast" role="status">
           {notice}
+          {leaving && (
+            <button
+              className="recall-lantern"
+              onClick={() => {
+                setLeaving(null);
+                setNotice("Your thought is back, safe on the water.");
+              }}
+            >
+              Bring it back
+            </button>
+          )}
           <button aria-label="Dismiss message" onClick={() => setNotice("")}>
             ×
           </button>
@@ -376,9 +394,16 @@ export default function Moonwell({ onChime }: { onChime: () => void }) {
               </time>
               <button
                 onClick={() => {
-                  if (confirm("Remove this lantern and its writing?")) {
-                    setLanterns((l) => l.filter((v) => v.id !== selected.id));
+                  if (
+                    confirm(
+                      "Let this thought float away? Its writing will be removed.",
+                    )
+                  ) {
+                    setLeaving(selected.id);
                     setSelected(null);
+                    setNotice(
+                      "Your thought is drifting away. You can bring it back before it disappears.",
+                    );
                   }
                 }}
               >

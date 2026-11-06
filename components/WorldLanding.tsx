@@ -7,6 +7,10 @@ import {
   Pause,
   Play,
   Wind,
+  Stars,
+  Leaf,
+  Waves,
+  Flower2,
 } from "lucide-react";
 import IslandArt, { type IslandKind } from "./IslandArt";
 const destinations = [
@@ -19,6 +23,7 @@ const destinations = [
       "Follow the zodiac through a boundless night, or leave a little piece of yourself among the stars.",
     note: "THE CELESTIAL ARCHIVE",
     color: "#aca0d7",
+    icon: Stars,
   },
   {
     id: "forest" as const,
@@ -29,6 +34,7 @@ const destinations = [
       "An ancient forest. A clearing of your own. Trace a thought through the air and watch it turn to light.",
     note: "THE ENCHANTED GROVE",
     color: "#93c6af",
+    icon: Leaf,
   },
   {
     id: "lake" as const,
@@ -39,6 +45,7 @@ const destinations = [
       "Give a wish to a lantern. Watch it find its place on the lake. Stay as long as you need.",
     note: "THE STILLWATER SANCTUARY",
     color: "#a8bbd8",
+    icon: Waves,
   },
   {
     id: "garden" as const,
@@ -49,6 +56,7 @@ const destinations = [
       "Roses, foxgloves, and wild things. Plant a living composition in a forgotten moonlit conservatory.",
     note: "THE BOTANICAL CONSERVATORY",
     color: "#d0a9b9",
+    icon: Flower2,
   },
 ];
 export default function WorldLanding({
@@ -63,7 +71,9 @@ export default function WorldLanding({
     [dusk, setDusk] = useState(false);
   const root = useRef<HTMLElement>(null),
     point = useRef({ x: 0, y: 0 }),
-    raf = useRef(0);
+    raf = useRef(0),
+    swipe = useRef<{ x: number; moved: boolean } | null>(null),
+    wheelTime = useRef(0);
   const destination = destinations[index];
   useEffect(() => {
     if (!drifting) return;
@@ -131,15 +141,13 @@ export default function WorldLanding({
           <span /> A SOFTER CORNER OF THE UNIVERSE
         </div>
         <h1>
-          Somewhere
+          Hi Nancy,
           <br />
-          you can <em>just be.</em>
+          welcome to
+          <br />
+          <em>your calm spot.</em>
         </h1>
-        <p>
-          No destination to reach.
-          <br />
-          Only places to feel.
-        </p>
+        <p>A little world that asks nothing of you.</p>
         <button
           className="dusk-toggle"
           onClick={() => setDusk((v) => !v)}
@@ -149,11 +157,51 @@ export default function WorldLanding({
           {dusk ? "Golden hour" : "After the world goes quiet"}
         </button>
       </div>
-      <div className="island-spotlight" key={destination.id}>
+      <div
+        className="island-spotlight rotating-carousel"
+        key={destination.id}
+        onWheel={(e) => {
+          if (Date.now() - wheelTime.current < 650) return;
+          if (Math.abs(e.deltaX) > 15 || e.shiftKey) {
+            wheelTime.current = Date.now();
+            preview(index + (e.deltaX + e.deltaY > 0 ? 1 : -1));
+          }
+        }}
+      >
+        <button
+          className="carousel-neighbor previous"
+          aria-label="Rotate to previous island"
+          onClick={() => preview(index - 1)}
+        >
+          <IslandArt kind={destinations[(index + 3) % 4].id} />
+        </button>
+        <button
+          className="carousel-neighbor next"
+          aria-label="Rotate to next island"
+          onClick={() => preview(index + 1)}
+        >
+          <IslandArt kind={destinations[(index + 1) % 4].id} />
+        </button>
         <span className="spotlight-halo" />
         <button
           className="hero-island"
-          onClick={() => onTravel(destination.id)}
+          onPointerDown={(e) => {
+            swipe.current = { x: e.clientX, moved: false };
+            e.currentTarget.setPointerCapture(e.pointerId);
+          }}
+          onPointerUp={(e) => {
+            if (swipe.current && Math.abs(e.clientX - swipe.current.x) > 55) {
+              swipe.current.moved = true;
+              preview(index + (e.clientX < swipe.current.x ? 1 : -1));
+            }
+          }}
+          onClick={() => {
+            if (swipe.current?.moved) {
+              swipe.current = null;
+              return;
+            }
+            onTravel(destination.id);
+          }}
           aria-label={`Visit ${destination.name}`}
         >
           <IslandArt kind={destination.id} />

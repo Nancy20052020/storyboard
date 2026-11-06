@@ -1,5 +1,4 @@
 import { test, expect } from "@playwright/test";
-import { readFile } from "node:fs/promises";
 
 test("legacy lanterns and a full collection stay above the composer on desktop and mobile", async ({
   page,
@@ -63,7 +62,7 @@ test("legacy lanterns and a full collection stay above the composer on desktop a
   await expect(page.getByRole("dialog")).toContainText("Memory 99");
 });
 
-test("older eight-patch gardens migrate and new botanical plantings export and import", async ({
+test("older eight-patch gardens migrate and new botanical plantings persist", async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -108,24 +107,27 @@ test("older eight-patch gardens migrate and new botanical plantings export and i
   await page
     .getByRole("button", { name: "Close flower details", exact: true })
     .click();
-  const downloaded = page.waitForEvent("download");
-  await page
-    .getByRole("button", { name: "Export musical garden", exact: true })
-    .click();
-  const file = await downloaded;
-  const path = (await file.path())!;
-  const json = JSON.parse(await readFile(path, "utf8"));
-  expect(json.blooms).toHaveLength(24);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("starwoven-everbloom-v1") || "{}")
+            .blooms?.length,
+      ),
+    )
+    .toBe(24);
+  const json = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem("starwoven-everbloom-v1") || "{}"),
+  );
   expect(json.blooms[0]).toEqual({ kind: "moonbell", note: 2 });
   expect(json.blooms[12]).toEqual({ kind: "peony", note: 4 });
-  await page
-    .getByRole("textbox", { name: "Garden name", exact: true })
-    .fill("Changed locally");
-  page.once("dialog", (dialog) => dialog.accept());
-  await page.locator("input[type=file]").setInputFiles(path);
+  await page.reload();
   await expect(
     page.getByRole("textbox", { name: "Garden name", exact: true }),
   ).toHaveValue("My old garden");
+  await expect(
+    page.getByRole("button", { name: "Bloom 13: peony, note A", exact: true }),
+  ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(

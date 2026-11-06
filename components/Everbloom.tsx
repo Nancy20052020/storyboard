@@ -5,7 +5,6 @@ import {
   Play,
   Pause,
   Trash2,
-  Download,
   Volume2,
   Check,
   Music2,
@@ -13,7 +12,6 @@ import {
   X,
   Sun,
   Moon,
-  Upload,
 } from "lucide-react";
 import {
   flowers,
@@ -44,8 +42,7 @@ export default function Everbloom({
     [palette, setPalette] = useState(false),
     [dawn, setDawn] = useState(false);
   const current = useRef(garden),
-    note = useRef(onNote),
-    file = useRef<HTMLInputElement>(null);
+    note = useRef(onNote);
   current.current = garden;
   note.current = onNote;
   useEffect(() => {
@@ -110,41 +107,6 @@ export default function Everbloom({
       }));
       setSelected(i);
       onNote(notes[n].frequency, seed);
-    }
-  }
-  function exportGarden() {
-    const a = document.createElement("a"),
-      url = URL.createObjectURL(
-        new Blob([JSON.stringify(garden, null, 2)], {
-          type: "application/json",
-        }),
-      );
-    a.href = url;
-    a.download = "my-everbloom-garden.json";
-    a.click();
-    URL.revokeObjectURL(url);
-    setMessage("Your planting and its melody are saved in a file.");
-  }
-  async function importGarden(f?: File) {
-    if (!f) return;
-    try {
-      if (f.size > 100000) throw Error();
-      const parsed = readGarden(JSON.parse(await f.text()));
-      if (!parsed) throw Error();
-      if (
-        !confirm(
-          "Replace this garden with the planting in this file? Export first to keep your current garden.",
-        )
-      )
-        return;
-      setPlaying(false);
-      setGarden(parsed);
-      setSelected(null);
-      setMessage("Your garden has found its way back.");
-    } catch {
-      setMessage("That file could not be read as an Everbloom garden.");
-    } finally {
-      if (file.current) file.current.value = "";
     }
   }
   const chosen = flowers.find((f) => f.id === seed)!,
@@ -258,9 +220,7 @@ export default function Everbloom({
               }
             />
             <span className={saved ? "" : "storage-warning"}>
-              {saved
-                ? "Saved on this device"
-                : "Storage unavailable · export to keep"}
+              {saved ? "Saved on this device" : "Changes may not be saved"}
             </span>
           </div>
           <div className="enchanted-flowerbed" aria-label="Your planting beds">
@@ -342,27 +302,6 @@ export default function Everbloom({
                 }
               />
             </label>
-            <button
-              className="garden-export"
-              onClick={exportGarden}
-              aria-label="Export musical garden"
-            >
-              <Download size={15} />
-            </button>
-            <button
-              className="garden-export"
-              onClick={() => file.current?.click()}
-              aria-label="Import musical garden"
-            >
-              <Upload size={15} />
-            </button>
-            <input
-              hidden
-              type="file"
-              ref={file}
-              accept="application/json,.json"
-              onChange={(e) => void importGarden(e.target.files?.[0])}
-            />
           </div>
           {bloom && selected !== null ? (
             <div className="bloom-editor">

@@ -17,11 +17,13 @@ import {
   Flower2,
 } from "lucide-react";
 import { type IslandKind } from "@/components/IslandArt";
+import MysticCompanion from "@/components/MysticCompanion";
 import WorldLanding from "@/components/WorldLanding";
 import useRealmAudio from "@/components/useRealmAudio";
 import "./realm.css";
 import "./enchanted.css";
 import "./immersive.css";
+import "./starlight.css";
 const Observatory = dynamic(() => import("@/components/Observatory"), {
   loading: () => <div className="realm-loading">Gathering your stars…</div>,
 });
@@ -226,15 +228,20 @@ export default function Home() {
           <Everbloom sound={sound} onEnableSound={toggle} onNote={playNote} />
         )}
       </div>
-      <nav className="island-dock" aria-label="Island navigation">
+      <MysticCompanion place={place} onChime={chime} />
+      <nav className="island-dock portal-rail" aria-label="Island navigation">
         <button
           className={place === "world" ? "selected" : ""}
           onClick={() => travel("world")}
           aria-label="Island map"
           aria-current={place === "world" ? "page" : undefined}
         >
-          <Compass size={18} />
-          <span>The in-between</span>
+          <span className="portal-icon">
+            <Compass size={18} />
+            <i />
+          </span>
+          <span className="portal-label">The in-between</span>
+          <span className="portal-mobile-label">Islands</span>
         </button>
         <i />
         {islands.map((island) => (
@@ -245,8 +252,20 @@ export default function Home() {
             aria-label={island.name}
             aria-current={place === island.id ? "page" : undefined}
           >
-            <island.icon size={17} />
-            <span>{island.name}</span>
+            <span className="portal-icon">
+              <island.icon size={17} />
+              <i />
+            </span>
+            <span className="portal-label">{island.name}</span>
+            <span className="portal-mobile-label">
+              {island.id === "sky"
+                ? "Stars"
+                : island.id === "forest"
+                  ? "Forest"
+                  : island.id === "lake"
+                    ? "Lake"
+                    : "Garden"}
+            </span>
             <small>{island.index}</small>
           </button>
         ))}
@@ -312,12 +331,13 @@ function WorldGuide({ onClose }: { onClose: () => void }) {
           Paint glowing trails with your hand in <b>Whisperwood</b>. Leave a
           thought on the water, or pause for a breath at <b>Moonwell</b>. Grow a
           musical flower garden at <b>Everbloom</b>, or meet the zodiac
-          constellations in the Observatory’s illustrated atlas.
+          constellations in one real, catalog-based sky.
         </p>
         <p>
-          Your original constellation journal is still here, with its saved
-          stars. Everything saves in this browser; clearing browser data removes
-          it. Export precious writing and drawings to keep them safe.
+          Choose a real star and write beside its light. Earlier thoughts are
+          kept safe in Your saved thoughts, ready to be attached to a real star.
+          Everything saves on this device. Clearing browser data removes saved
+          writing.
         </p>
         <p className="privacy-note">
           Hand drawing uses MediaPipe locally, with permission. Camera video is

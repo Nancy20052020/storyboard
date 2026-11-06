@@ -3,7 +3,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Starwoven — a little universe of your own",
   description:
-    "An immersive world of four quiet islands. Explore a full-sky constellation atlas, draw into an enchanted forest, float lantern thoughts, and plant a realistic botanical music garden.",
+    "Nancy’s calm spot: one real star sky to write in, a draggable celestial companion, an enchanted drawing forest, floating lantern thoughts, and a botanical music garden.",
 };
 export default function RootLayout({
   children,

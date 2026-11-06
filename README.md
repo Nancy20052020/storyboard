@@ -4,11 +4,21 @@ A full-window, private world of floating islands. No quests, scores, accounts, A
 
 ## The islands
 
-- **The in-between** — a spacious landing with one large island preview at a time. Choose among four destinations, use previous/next, enable optional slow drifting, move the pointer for gentle parallax, or switch between midnight and golden-hour tones. The character widget has been removed. The island dock appears inside destinations; direct `/#sky`, `/#forest`, `/#lake`, and `/#garden` links and browser history still work.
-- **Starlit Observatory** — a full-background illustrated universe with all twelve zodiac constellations, plus Orion, Cassiopeia, Ursa Major, and Cygnus. Pan, zoom, select constellations, and toggle lines/names. This is an illustrated atlas, not a live local sky chart. **My stars & writing** opens the original journal in the same immersive format, preserving saved stars, writing, connections, and JSON import/export.
-- **Whisperwood** — draw directly into a full-screen forest clearing with a mouse, touch, or camera-based hand tracking. Pinch thumb + index to draw; release to move. Color, stroke size, undo, clear, saved sketches, and PNG export remain available. PNG exports include the forest backdrop.
-- **Moonwell** — a full-scene lake with separate layout regions for open water and writing. Lanterns never share the composer’s space. Collections page in groups of 24 on desktop or 12 on mobile, so all 100 supported thoughts remain reachable without piling underneath the form. Old saved lantern positions are preserved in storage and displayed in the safe layout. Write, reread, remove, export, or pause for a breathing exercise.
-- **Everbloom** — a full-background Victorian conservatory with 24 planting locations and nine realistic botanical species: bluebell, stargazer lily, golden dahlia, English rose, peony, lavender, iris, foxglove, and tulip. Open **Plant flowers**, choose a specimen, and select an open patch. Tune flowers, adjust tempo, play/pause the composition, and switch moonlight/first light. Gardens save, export, and import JSON. Older eight-patch gardens migrate automatically without losing their original flowers or notes.
+- **Home** — “Hi Nancy, welcome to your calm spot.” A carousel with a large central island and two soft neighboring previews. Switch with arrows, previews, horizontal wheel/trackpad gestures, or a swipe across the island. Optional drifting, parallax, and dusk lighting remain available.
+- **Starlit Observatory** — one real sky and one writing system. The bundled catalog contains 5,044 measured Hipparcos/XHIP stars and all 88 constellation patterns. Search by proper name or Hipparcos number, click a star, write beside it, and connect two actual stars. A location/time panel changes the geometric sky reference; **Your sky now** returns to the current overhead sky. Default location is explicitly New Delhi until you choose another city or opt into location access. The selected location is stored on this device. There is no separate atlas/journal view or invented-star placement.
+- **Whisperwood** — draw directly into a full-screen forest clearing with a mouse, touch, or local camera-based hand tracking. Pinch thumb + index to draw; release to move. Colors, brush sizes, undo, clear, and saved sketches remain available.
+- **Moonwell** — writing and open water occupy separate layout regions. New lanterns travel toward the water. **Let it go** makes a saved lantern drift away before removing it; **Bring it back** recalls it during the departure. Reduced-motion users get a short, quieter transition. Collections page in groups of 24 on desktop or 12 on mobile, preserving access to all 100 supported thoughts without covering the composer.
+- **Everbloom** — a full-background conservatory with 24 planting locations, nine realistic flower species, musical notes, tempo/playback, and moonlight/first-light lighting. Earlier eight-patch gardens migrate automatically.
+
+**Aster**, a small celestial dragon spirit, welcomes Nancy to each island. Drag Aster with a mouse or touch, or focus the companion and use arrow keys to move. Click to chat, say hello, or start an optional stroll. Home resets the focused companion’s position. Drag positions persist on this device, adapt to viewport changes, and stay clear of the header and bottom navigation. Welcome messages close as you begin interacting. The navigation is styled as an engraved portal rail with orbiting accents.
+
+All export, download, and import controls have been removed at the user's request. Content stays in browser storage.
+
+## The real sky
+
+Catalog data is bundled in `data/sky-catalog.json`, derived from d3-celestial's XHIP compilation and constellation data. Mean J2000 coordinates are precessed to the chosen date, projected onto a rotatable celestial hemisphere, and used for hit-testing. The Milky Way band follows the galactic equator. Sidereal time and observer latitude/longitude determine the overhead reference and above/below-horizon facts. Proper motion, atmospheric refraction, weather, daylight brightness, and solar-system bodies are not modeled. This is a real-coordinate star explorer, not a telescope photograph or precision observing tool.
+
+Earlier invented-star journal entries remain under **Your saved thoughts → Earlier thoughts, kept safe**. Choose one and then a real star to attach it to; the earlier copy stays safe. Existing writing on a destination star is replaced only after confirmation. New notes and connections use stable Hipparcos IDs and save in `starwoven-real-sky-v1`; the old `starwoven-sky-v1` data remains intact.
 
 ## Visual direction
 
@@ -36,7 +46,7 @@ npm start
 
 Import this repository into Vercel and use the **Next.js** framework preset, repository root, and default build/output settings. No environment variables or backend services are needed. The standard dependency installation runs `postinstall` and includes the local hand-tracking assets in the deployment. Do not override installation with `--ignore-scripts`.
 
-If the live site still shows an older version, check the deployment’s **Source** commit against the latest commit on `main`. Confirm the Vercel project connects to `Nancy20052020/storyboard`, production branch `main`, and that the latest successful deployment is assigned to the production domain. The current homepage shows one large island preview at a time, with four destination selectors and no bunny.
+If the live site still shows an older version, check the deployment’s **Source** commit against the latest commit on `main`. Confirm the Vercel project connects to `Nancy20052020/storyboard`, production branch `main`, and that the latest successful deployment is assigned to the production domain. The current homepage greets Nancy, shows the island carousel, and includes Aster, the draggable celestial companion.
 
 Camera access requires HTTPS (provided by Vercel) or localhost, a camera, and a browser supporting WebAssembly and WebGL. Enable hand drawing from the grove, allow camera permission, keep your hand in good light, and pinch thumb + index finger. If camera permission is declined or tracking isn't supported, mouse and touch drawing remain available. The camera stops when you turn it off, leave the grove, or hide the tab. Camera frames are processed locally; they are never uploaded or recorded.
 
@@ -50,7 +60,7 @@ npm run typecheck
 npm run test:e2e
 ```
 
-`npm test` runs five unit tests for pinch recognition, palm-relative thresholds, hysteresis, coordinate mapping, invalid input, and smoothing. Ten browser tests exercise island previews, the full-screen atlas, botanical garden planting/tuning/playback/export/import and migration, existing-sky preservation, drawing/PNG export/persistence/undo, lanterns, breathing controls, camera denial, and a deterministic pinch-to-stroke/camera-cleanup pipeline. A regression test seeds 100 legacy lanterns at formerly overlapping coordinates and checks that the visible lanterns stay above the composer and that all thoughts remain reachable on desktop and mobile. The browser suite builds and starts its own production server on port 3100.
+`npm test` checks astronomy reference values, catalog integrity, projection/precession/horizon geometry, and hand gesture recognition. Browser tests exercise real-star selection and writing, legacy thought attachment, current-sky settings, star connections, Nancy’s carousel, Aster’s dragging/welcomes, botanical garden persistence, lantern layout/release, and hand drawing/camera cleanup. The browser suite builds and starts a production server on port 3100. Desktop and phone workflows are included.
 
 For the browser suite, first install Chromium with `npx playwright install chromium`, or point to an existing installation:
 
@@ -62,6 +72,6 @@ Actual MediaPipe model/WASM initialization was also checked in Chromium with a s
 
 ## Your writing and drawings
 
-Everything saves in this browser's localStorage, separately for each device/browser. Nothing syncs to a server. Clearing browser data removes saved writing and drawings. Storage restrictions or quota limits can prevent persistence; each scene reports a warning. Export valuable skies, drawings, and lantern writing regularly. Sky and musical garden JSON files support import. PNG drawings and lantern JSON exports are keepsakes/backups for viewing outside the app.
+Everything saves in this browser's localStorage, separately for each device/browser. Nothing syncs to a server. Clearing browser data removes saved writing and drawings. Storage restrictions or quota limits can prevent persistence; each scene reports a warning. There are no export/import controls. Keep anything irreplaceable separately; clearing browser storage removes saved content.
 
 Sound is synthesized in the browser and starts only after you enable it. The page optionally loads Google Fonts and uses system fallbacks if unavailable. See `THIRD_PARTY_NOTICES.md` for MediaPipe licensing.

@@ -1,70 +1,78 @@
 import { test, expect } from "@playwright/test";
 
-test("islands are keyboard accessible and the original sky survives navigation", async ({
+test("earlier writing is preserved and can be attached to a real star", async ({
   page,
 }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
-  await page.addInitScript(() =>
-    localStorage.setItem(
-      "starwoven-sky-v1",
-      JSON.stringify({
-        name: "A sky from before the islands",
-        stars: [
-          {
-            id: "old",
-            x: 50,
-            y: 40,
-            title: "An old memory",
-            note: "Keep this safe.",
-            color: "#e9d1a2",
-          },
-        ],
-        edges: [],
-      }),
-    ),
-  );
-  await page.goto("/");
+  await page.addInitScript(() => {
+    if (!localStorage.getItem("starwoven-sky-v1"))
+      localStorage.setItem(
+        "starwoven-sky-v1",
+        JSON.stringify({
+          name: "My old sky",
+          stars: [
+            {
+              id: "old",
+              x: 50,
+              y: 40,
+              title: "An old memory",
+              note: "Keep this safe.",
+              color: "#e9d1a2",
+            },
+          ],
+          edges: [],
+        }),
+      );
+  });
+  await page.goto("/#sky");
   await page
-    .getByRole("button", { name: "Preview Starlit Observatory", exact: true })
-    .focus();
-  await page.keyboard.press("Enter");
-  await page
-    .getByRole("button", { name: "Visit Starlit Observatory", exact: true })
+    .getByRole("button", { name: "Your saved thoughts", exact: true })
     .click();
-  await page
-    .getByRole("button", { name: "My stars & writing", exact: true })
-    .click();
-  await expect(
-    page.getByRole("textbox", { name: "Name your sky" }),
-  ).toHaveValue("A sky from before the islands");
-  await page
-    .getByRole("button", { name: "Open star: An old memory", exact: true })
-    .click();
+  await page.getByRole("button", { name: /An old memory/ }).click();
   await expect(
     page.getByRole("textbox", { name: "Write your thought" }),
   ).toHaveValue("Keep this safe.");
   await page
     .getByRole("textbox", { name: "Write your thought" })
     .fill("Still mine.");
+  await page.getByRole("textbox", { name: "Find a real star" }).fill("Sirius");
+  await page
+    .locator(".star-results button")
+    .filter({ hasText: "Sirius" })
+    .click();
+  await page
+    .getByRole("button", { name: "Attach this thought to Sirius", exact: true })
+    .click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          JSON.parse(localStorage.getItem("starwoven-real-sky-v1") || "{}")
+            .thoughts?.["hip-32349"]?.text,
+      ),
+    )
+    .toBe("Still mine.");
   await page.getByRole("button", { name: "Moonwell", exact: true }).click();
   await page
     .getByRole("button", { name: "Starlit Observatory", exact: true })
     .click();
+  await page.getByRole("textbox", { name: "Find a real star" }).fill("Sirius");
   await page
-    .getByRole("button", { name: "My stars & writing", exact: true })
-    .click();
-  await page
-    .getByRole("button", { name: "Open star: An old memory", exact: true })
+    .locator(".star-results button")
+    .filter({ hasText: "Sirius" })
     .click();
   await expect(
     page.getByRole("textbox", { name: "Write your thought" }),
   ).toHaveValue("Still mine.");
-  await expect(page.locator("video")).toHaveCount(0);
-  expect(errors).toEqual([]);
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("starwoven-sky-v1") || "{}").stars[0]
+          .note,
+    ),
+  ).toBe("Still mine.");
 });
 
-test("draws, exports a PNG, flushes on leaving, and undoes a saved stroke", async ({
+test("draws, flushes on leaving, and undoes a saved stroke", async ({
   page,
 }) => {
   await page.goto("/#forest");
@@ -84,13 +92,6 @@ test("draws, exports a PNG, flushes on leaving, and undoes a saved stroke", asyn
   await page.getByRole("button", { name: "Moonwell", exact: true }).click();
   await page.getByRole("button", { name: "Whisperwood", exact: true }).click();
   await expect(board.locator("polyline")).toHaveCount(1);
-  const downloaded = page.waitForEvent("download");
-  await page
-    .getByRole("button", { name: "Keep this moment", exact: true })
-    .click();
-  expect((await downloaded).suggestedFilename()).toBe(
-    "whisperwood-drawing.png",
-  );
   await page.getByRole("button", { name: "Undo last stroke" }).click();
   await expect(board.locator("polyline")).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -101,7 +102,7 @@ test("draws, exports a PNG, flushes on leaving, and undoes a saved stroke", asyn
   ).toBe(true);
 });
 
-test("lantern writing, breathing, export and removal work", async ({
+test("lantern writing, breathing and floating release work", async ({
   page,
 }) => {
   // Exercise the far edge of the placement range: lanterns must stay clear of the composer.
@@ -133,13 +134,6 @@ test("lantern writing, breathing, export and removal work", async ({
   await page
     .getByRole("button", { name: "Pause breathing exercise", exact: true })
     .click();
-  const download = page.waitForEvent("download");
-  await page
-    .getByRole("button", { name: "Export 1 lantern", exact: true })
-    .click();
-  expect((await download).suggestedFilename()).toBe(
-    "my-moonwell-lanterns.json",
-  );
   await page.locator(".floating-lantern").click();
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Let it go", exact: true }).click();

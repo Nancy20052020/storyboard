@@ -8,6 +8,7 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:3100",
     viewport: { width: 1280, height: 900 },
     reducedMotion: "reduce",
+    timezoneId: "Asia/Kolkata",
     trace: "retain-on-failure",
     launchOptions: {
       ...(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH

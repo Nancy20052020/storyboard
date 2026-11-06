@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   Camera,
   CameraOff,
-  Download,
   Undo2,
   Trash2,
   Hand,
@@ -106,7 +105,7 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
   function begin(p: Point) {
     if (data.current.length >= 300) {
       notify(
-        "This drawing has 300 strokes. Save it as an image, then clear a little space.",
+        "This drawing has 300 strokes. Undo or clear a little space to keep drawing.",
       );
       return;
     }
@@ -178,7 +177,7 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
       try {
         localStorage.setItem(storageKey, JSON.stringify(data.current));
       } catch {
-        /* The visible export action remains available when storage is full. */
+        /* Storage errors are reported by the scene. */
       }
       generation.current++;
       cancelAnimationFrame(frame.current);
@@ -320,62 +319,6 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
       y: Math.max(0, Math.min(650, ((e.clientY - r.top) / r.height) * 650)),
     };
   }
-  async function saveImage() {
-    if (!board.current) return;
-    try {
-      const clone = board.current.cloneNode(true) as SVGSVGElement;
-      clone.querySelector(".hand-cursor")?.remove();
-      clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-      const backdrop = clone.querySelector("image");
-      if (backdrop) {
-        const response = await fetch("/art/whisperwood-clearing.webp");
-        if (!response.ok) throw new Error("Drawing background unavailable");
-        const blob = await response.blob();
-        const source = await new Promise<string>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(String(reader.result));
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
-        backdrop.setAttribute("href", source);
-      }
-
-      const imageHeight = Math.round(
-        (1600 * board.current.getBoundingClientRect().height) /
-          board.current.getBoundingClientRect().width,
-      );
-      clone.setAttribute("width", "1600");
-      clone.setAttribute("height", String(imageHeight));
-      const url = URL.createObjectURL(
-        new Blob([new XMLSerializer().serializeToString(clone)], {
-          type: "image/svg+xml",
-        }),
-      );
-      const img = new Image();
-      try {
-        await new Promise<void>((resolve, reject) => {
-          img.onload = () => resolve();
-          img.onerror = reject;
-          img.src = url;
-        });
-        const c = document.createElement("canvas");
-        c.width = 1600;
-        c.height = imageHeight;
-        const ctx = c.getContext("2d");
-        if (!ctx) throw Error();
-        ctx.drawImage(img, 0, 0, c.width, c.height);
-        const a = document.createElement("a");
-        a.download = "whisperwood-drawing.png";
-        a.href = c.toDataURL("image/png");
-        a.click();
-        notify("A little forest magic, yours to keep.");
-      } finally {
-        URL.revokeObjectURL(url);
-      }
-    } catch {
-      notify("Image export could not finish. Please try again.");
-    }
-  }
   return (
     <section
       className="forest-scene scene-enter"
@@ -498,9 +441,7 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
               {camera === "on" ? status : "A CANVAS FOR YOUR WANDERING MIND"}
             </span>
             <span className={saved ? "" : "storage-warning"}>
-              {saved
-                ? "Saved on this device"
-                : "Storage full · save your image"}
+              {saved ? "Saved on this device" : "Changes may not be saved"}
             </span>
           </div>
           <div className="drawing-surface">
@@ -683,9 +624,7 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
               disabled={!strokes.length || drawing}
               onClick={() => {
                 if (
-                  confirm(
-                    "Clear this drawing? Save an image first if you want to keep it.",
-                  )
+                  confirm("Clear this drawing? Its strokes will be removed.")
                 ) {
                   end();
                   commit([]);
@@ -693,10 +632,6 @@ export default function ForestGrove({ onChime }: { onChime: () => void }) {
               }}
             >
               <Trash2 size={16} />
-            </button>
-            <button className="save-art" onClick={() => void saveImage()}>
-              <Download size={15} />
-              <span>Keep this moment</span>
             </button>
           </div>
           <div className="drawing-caption">
